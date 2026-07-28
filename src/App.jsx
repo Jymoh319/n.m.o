@@ -3,7 +3,7 @@ import { ThemeProvider } from './context/ThemeContext';
 import Sidebar from './components/Sidebar';
 import Header from './components/Header';
 import Dashboard from './components/Dashboard';
-import Certificate from './components/Certificate';
+import Certifications from './components/Certificate';
 import Shipping from './components/Shipping';
 import MineralSources from './components/MineralSources';
 import Royalties from './components/Royalties';
@@ -12,7 +12,7 @@ import Settings from './components/Settings';
 
 const pageTitles = {
   '/': 'Dashboard',
-  '/certificate': 'Certificate',
+  '/certifications': 'Certifications',
   '/shipping': 'Shipping',
   '/mineral-sources': 'Mineral Sources',
   '/royalties': 'Royalties',
@@ -32,7 +32,7 @@ function Layout() {
         <main className="flex-1 overflow-y-auto p-6">
           <Routes>
             <Route path="/" element={<Dashboard />} />
-            <Route path="/certificate" element={<Certificate />} />
+            <Route path="/certifications" element={<Certifications />} />
             <Route path="/shipping" element={<Shipping />} />
             <Route path="/mineral-sources" element={<MineralSources />} />
             <Route path="/royalties" element={<Royalties />} />

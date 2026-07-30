@@ -48,7 +48,7 @@ const sources = [
   },
   {
     id: 5,
-    name: 'Sector 2E - West Slope',
+    name: 'Sector 3A - West Slope',
     coordinates: '-4.2801, 39.2392',
     minerals: ['Monazite', 'Titanium'],
     depth: '38m',

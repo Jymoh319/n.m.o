@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { useTheme } from "../context/ThemeContext";
+import { useState } from "react";
 import {
   Sun,
   Moon,
@@ -7,9 +8,13 @@ import {
   Bell,
   Shield,
   User,
+  Info,
+  ChevronDown,
+  ChevronUp,
 } from "lucide-react";
 
 export default function Settings() {
+  const [showAbout, setShowAbout] = useState(false);
   const { theme, toggleTheme } = useTheme();
 
   return (
@@ -185,6 +190,99 @@ export default function Settings() {
           </Link>
         </div>
       </div>
+
+      {/* About N.M.O */}
+<div className="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm">
+
+  <button
+  onClick={() => setShowAbout(!showAbout)}
+  className="w-full flex justify-between items-center text-left"
+>
+    <div className="flex items-center gap-2">
+      <Info className="text-sky-500" size={20} />
+      <h3 className="text-lg font-semibold text-slate-800 dark:text-white">
+        About N.M.O
+      </h3>
+
+      <p className="text-sm text-slate-500 dark:text-slate-400 mt-2">
+  Learn more about Nairobi Mining Operation and its mission.
+</p>
+    </div>
+
+    {showAbout ? <ChevronUp /> : <ChevronDown />}
+  </button>
+
+  {showAbout && (
+    <div className="mt-6 text-slate-600 dark:text-slate-300 space-y-5">
+
+      <div>
+        <h4 className="font-semibold text-xl mb-2">
+          Nairobi Mining Operation v0.01
+        </h4>
+
+        <p>
+          Welcome to version 0.01 of Nairobi Mining Operation, a mining
+          operations management platform designed to simplify the tracking and
+          management of mining activities through a centralized digital system.
+        </p>
+
+        <p className="mt-3">
+          The platform provides tools for monitoring mining sites, recording
+          mineral extraction activities, managing certifications, tracking
+          royalties, and overseeing harvesting operations.
+        </p>
+
+        <p className="mt-3">
+          Built to address fragmented record keeping and operational oversight,
+          N.M.O centralizes mining data into one accessible dashboard.
+        </p>
+      </div>
+
+      <div>
+        <h4 className="font-semibold text-lg mb-2">
+          Our Mission
+        </h4>
+
+        <p>
+          To provide a modern, scalable, and user-friendly platform that helps
+          mining organizations manage resources, operations, and records more
+          effectively through technology.
+        </p>
+      </div>
+
+      <div>
+        <h4 className="font-semibold text-lg mb-2">
+          Core Features
+        </h4>
+
+        <ul className="list-disc ml-6 space-y-1">
+          <li>Mining Site Management</li>
+          <li>Mineral Resource Tracking</li>
+          <li>Operational Dashboard & Analytics</li>
+          <li>Harvesting and Extraction Records</li>
+          <li>Certification Management</li>
+          <li>Royalty Monitoring</li>
+          <li>Shipment and Logistics Tracking</li>
+          <li>User Account Management</li>
+        </ul>
+      </div>
+
+      <div>
+        <h4 className="font-semibold text-lg mb-2">
+          Future Vision
+        </h4>
+
+        <p>
+          N.M.O aims to evolve into a comprehensive mining intelligence
+          platform with GIS mapping, advanced reporting, real-time operational
+          monitoring, multi-factor authentication, and data-driven
+          decision-making tools for mining stakeholders.
+        </p>
+      </div>
+
+    </div>
+  )}
+</div>
 
     </div>
   );

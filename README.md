@@ -5,6 +5,7 @@ Mining Operations Management System
 ## Team Workflow
 
 ### James
+
 Frontend Structure and Navigation
 
 Responsibilities:

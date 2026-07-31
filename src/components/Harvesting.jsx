@@ -48,7 +48,7 @@ const batches = [
     mineral: 'Monazite',
     quantity: '150 tonnes',
     grade: '78%',
-    source: 'Sector 2E',
+    source: 'Sector 3A',
     method: 'Open Pit',
     status: 'processing',
   },

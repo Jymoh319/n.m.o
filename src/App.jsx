@@ -6,7 +6,7 @@ import Dashboard from './components/Dashboard';
 import Certifications from './components/Certificate';
 import Shipping from './components/Shipping';
 import MineralSources from './components/MineralSources';
-import Royalties from './components/Royalties';
+import Records from './components/Records';
 import Harvesting from './components/Harvesting';
 import Settings from './components/Settings';
 
@@ -15,7 +15,7 @@ const pageTitles = {
   '/certifications': 'Certifications',
   '/shipping': 'Shipping',
   '/mineral-sources': 'Mineral Sources',
-  '/royalties': 'Royalties',
+  '/records': 'Records',
   '/harvesting': 'Harvesting',
   '/settings': 'Settings',
 };
@@ -35,7 +35,7 @@ function Layout() {
             <Route path="/certifications" element={<Certifications />} />
             <Route path="/shipping" element={<Shipping />} />
             <Route path="/mineral-sources" element={<MineralSources />} />
-            <Route path="/royalties" element={<Royalties />} />
+            <Route path="/records" element={<Records />} />
             <Route path="/harvesting" element={<Harvesting />} />
             <Route path="/settings" element={<Settings />} />
           </Routes>

@@ -1,0 +1,99 @@
+from flask import Flask
+from flask_restful import Api
+from flask_cors import CORS
+
+from config import Config
+from extensions import db, ma, bcrypt, jwt, migrate
+
+from resources.auth_resource import (
+    RegisterResource,
+    LoginResource,
+    CurrentUserResource,
+    LogoutResource
+)
+
+from resources.user_resource import UserListResource, UserResource
+from resources.mining_site_resource import MiningSiteListResource, MiningSiteResource
+from resources.mineral_resource import MineralListResource, MineralResource
+from resources.harvest_record_resource import HarvestRecordListResource, HarvestRecordResource
+from resources.certificate_resource import CertificateListResource, CertificateResource
+from resources.vehicle_resource import VehicleListResource, VehicleResource
+from resources.shipment_resource import ShipmentListResource, ShipmentResource
+from resources.site_record_resource import SiteRecordListResource, SiteRecordResource
+
+
+def create_app():
+    app = Flask(__name__)
+    app.config.from_object(Config)
+
+    CORS(app, resources={r"/*": {"origins": "*"}})
+
+    db.init_app(app)
+    migrate.init_app(app, db)
+    ma.init_app(app)
+    bcrypt.init_app(app)
+    jwt.init_app(app)
+
+    api = Api(app)
+
+    @app.get("/")
+    def home():
+        return {
+            "status": "Healthy",
+            "message": "Mining Management API is running!"
+        }, 200
+
+    # ---------- Authentication ----------
+
+    api.add_resource(RegisterResource, "/register")
+    api.add_resource(LoginResource, "/login")
+    api.add_resource(CurrentUserResource, "/me")
+    api.add_resource(LogoutResource, "/logout")
+
+    # ---------- Users ----------
+
+    api.add_resource(UserListResource, "/api/users")
+    api.add_resource(UserResource, "/api/users/<int:user_id>")
+
+    # ---------- Mining Sites ----------
+
+    api.add_resource(MiningSiteListResource, "/api/mining-sites")
+    api.add_resource(MiningSiteResource, "/api/mining-sites/<int:site_id>")
+
+    # ---------- Minerals ----------
+
+    api.add_resource(MineralListResource, "/api/minerals")
+    api.add_resource(MineralResource, "/api/minerals/<int:mineral_id>")
+
+    # ---------- Harvest Records ----------
+
+    api.add_resource(HarvestRecordListResource, "/api/harvest-records")
+    api.add_resource(HarvestRecordResource, "/api/harvest-records/<int:harvest_id>")
+
+    # ---------- Certificates ----------
+
+    api.add_resource(CertificateListResource, "/api/certificates")
+    api.add_resource(CertificateResource, "/api/certificates/<int:certificate_id>")
+
+    # ---------- Vehicles ----------
+
+    api.add_resource(VehicleListResource, "/api/vehicles")
+    api.add_resource(VehicleResource, "/api/vehicles/<int:vehicle_id>")
+
+    # ---------- Shipments ----------
+
+    api.add_resource(ShipmentListResource, "/api/shipments")
+    api.add_resource(ShipmentResource, "/api/shipments/<int:shipment_id>")
+
+    # ---------- Site Records ----------
+
+    api.add_resource(SiteRecordListResource, "/api/site-records")
+    api.add_resource(SiteRecordResource, "/api/site-records/<int:record_id>")
+
+    return app
+
+
+app = create_app()
+
+if __name__ == "__main__":
+    app.run(host="127.0.0.1", port=5000, debug=True)

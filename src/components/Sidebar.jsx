@@ -20,7 +20,7 @@ const navItems = [
   { to: '/certifications', label: 'Certifications', icon: Award },
   { to: '/shipping', label: 'Shipping', icon: Ship },
   { to: '/mineral-sources', label: 'Mineral Sources', icon: Mountain },
-  { to: '/royalties', label: 'Royalties', icon: Calculator },
+  { to: '/records', label: 'Records', icon: Calculator },
   { to: '/harvesting', label: 'Harvesting', icon: Wheat },
 ];
 

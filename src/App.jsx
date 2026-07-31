@@ -1,3 +1,5 @@
+import { useState } from "react";
+import Login from "./components/Login";
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { ThemeProvider } from './context/ThemeContext';
 import Sidebar from './components/Sidebar';
@@ -46,14 +48,19 @@ function Layout() {
 }
 
 function App() {
+  const [role, setRole] = useState(null);
+
+  if (!role) {
+    return <Login onLogin={setRole} />;
+  }
+
   return (
     <ThemeProvider>
       <BrowserRouter>
-        <Layout />
+        <Layout role={role} />
       </BrowserRouter>
     </ThemeProvider>
   );
 }
 
-export default App
-
+export default App;

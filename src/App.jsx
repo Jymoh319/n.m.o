@@ -49,10 +49,11 @@ function Layout() {
 
 // Removed the role for login on landing page
 
+function App() {
   return (
     <ThemeProvider>
       <BrowserRouter>
-        <Layout role={role} />
+        <Layout />
       </BrowserRouter>
     </ThemeProvider>
   );

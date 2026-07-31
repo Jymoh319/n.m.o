@@ -1,4 +1,4 @@
-# Geo Miners
+# Nairobi Mining Operations
 
 Mining Operations Management System
 

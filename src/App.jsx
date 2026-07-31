@@ -34,6 +34,7 @@ function Layout() {
         <main className="flex-1 overflow-y-auto p-6">
           <Routes>
             <Route path="/" element={<Dashboard />} />
+            <Route path="/login" element={<Login />} />
             <Route path="/certifications" element={<Certifications />} />
             <Route path="/shipping" element={<Shipping />} />
             <Route path="/mineral-sources" element={<MineralSources />} />

@@ -1,16 +1,124 @@
-# React + Vite
+# Geo Miners
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Mining Operations Management System
 
-Currently, two official plugins are available:
+## Team Workflow
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+### James
 
-## React Compiler
+Frontend Structure and Navigation
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+Responsibilities:
 
-## Expanding the ESLint configuration
+- Dashboard
+- Sidebar
+- Page Layouts
+- Route Navigation
+- Overall UI Integration
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+Files primarily affected:
+
+```text
+src/components/
+src/pages/
+App.jsx
+```
+
+---
+
+### Emmanuel
+
+Authentication and User Experience
+
+Responsibilities:
+
+- Login & Registration
+- User Account Management
+- Theme Management
+- About Section
+- User Context
+
+Files primarily affected:
+
+```text
+src/context/
+src/components/Login.jsx
+src/components/Profile.jsx
+src/components/About.jsx
+```
+
+---
+
+### Ryan
+
+Backend Integration and Mining Modules
+
+Responsibilities:
+
+- Certificates Module
+- Minerals Module
+- Royalties Module
+- Harvesting Module
+- API Development
+- Database Design
+
+Files primarily affected:
+
+```text
+backend/models/
+backend/routes/
+backend/schemas/
+```
+
+---
+
+## Development Flow
+
+Frontend
+
+```text
+Dashboard
+├── Sidebar
+├── Mining Sites
+├── Minerals
+├── Harvesting
+├── Certificates
+├── Royalties
+└── User Accounts
+```
+
+Backend
+
+```text
+Users
+├── Authentication
+├── Mining Sites
+├── Minerals
+├── Harvest Records
+├── Certificates
+└── Royalties
+```
+
+---
+
+## Current Objective
+
+Develop a functional MVP of Geo Miners for project presentation.
+
+### Core Features
+
+- Authentication
+- Dashboard
+- Mining Site Management
+- Mineral Management
+- Harvest Records
+- Certification Records
+- Royalty Tracking
+
+### Future Features
+
+- GIS Mapping
+- Two-Factor Authentication
+- Equipment Tracking
+- API Subscriptions
+- Analytics and Reporting

@@ -47,6 +47,8 @@ function Layout() {
   );
 }
 
+// Removed the role for login on landing page
+
 function App() {
   return (
     <ThemeProvider>

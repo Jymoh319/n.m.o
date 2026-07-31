@@ -1,7 +1,7 @@
 import { useState } from "react";
-import Login from "./components/Login";
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { ThemeProvider } from './context/ThemeContext';
+import Login from "./components/Login";
 import Sidebar from './components/Sidebar';
 import Header from './components/Header';
 import Dashboard from './components/Dashboard';

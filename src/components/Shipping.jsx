@@ -175,7 +175,7 @@ export default function Shipping() {
                   </td>
 
                   <td className="px-4 py-3 text-slate-600 dark:text-slate-300">
-                    {shipment.vessel}
+                    `${shipment.vehicle.vehicle_name} (${shipment.vehicle.vehicle_type})`
                   </td>
 
                   <td className="px-4 py-3 text-slate-600 dark:text-slate-300">

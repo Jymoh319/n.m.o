@@ -1,4 +1,28 @@
 @import "tailwindcss";
-
-/* Tell Tailwind to use the .dark class */
 @custom-variant dark (&:where(.dark, .dark *));
+@import url("https://fonts.googleapis.com/css2?family=Quantico:ital,wght@0,400;0,700;1,400;1,700&family=Quicksand:wght@300..700&display=swap");
+
+html,
+body,
+#root {
+    min-height: 100%;
+    font-family: "Quicksand", sans-serif;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: "Quantico", sans-serif;
+    font-weight: 700;
+}
+
+.font-quantico {
+    font-family: "Quantico", sans-serif;
+}
+
+.font-quicksand {
+    font-family: "Quicksand", sans-serif;
+}

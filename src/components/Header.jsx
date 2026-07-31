@@ -1,8 +1,10 @@
 import { Bell, Search, User } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
+import { useNavigate } from "react-router-dom";
 
 export default function Header({ title }) {
   const { theme } = useTheme();
+  const navigate = useNavigate();
 
   return (
     <header className="h-16 flex items-center justify-between px-6 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700">
@@ -22,7 +24,9 @@ export default function Header({ title }) {
           <Bell size={20} />
           <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-rose-500 rounded-full" />
         </button>
-        <button className="p-2 rounded-lg text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+        <button
+            onClick={() => navigate("/login?mode=signin")}
+            className="p-2 rounded-lg text-slate-500 dark:text-slate-400">
           <User size={20} />
         </button>
       </div>

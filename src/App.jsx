@@ -49,13 +49,6 @@ function Layout() {
 
 // Removed the role for login on landing page
 
-function App() {
-  const [role, setRole] = useState(null);
-
-  if (!role) {
-    return <Login onLogin={setRole} />;
-  }
-
   return (
     <ThemeProvider>
       <BrowserRouter>

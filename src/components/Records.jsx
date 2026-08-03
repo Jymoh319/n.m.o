@@ -8,7 +8,7 @@ import {
   Pickaxe,
 } from "lucide-react";
 
-const API = "http://127.0.0.1:5000/api";
+const API = "https://nmo-production.up.railway.app/api";
 
 export default function Records() {
   const [records, setRecords] = useState([]);

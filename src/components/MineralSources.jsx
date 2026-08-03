@@ -38,7 +38,7 @@ export default function MineralSources() {
   const [filter, setFilter] = useState("all");
 
   useEffect(() => {
-    fetch("http://127.0.0.1:5000/api/mining-sites")
+    fetch("https://nmo-production.up.railway.app/api/mining-sites")
       .then((res) => {
         if (!res.ok) {
           throw new Error("Failed to fetch mining sites.");

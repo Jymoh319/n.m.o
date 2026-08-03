@@ -22,22 +22,22 @@ with app.app_context():
     # ---------------- USERS ----------------
 
     admin = User(
-        username="admin",
-        email="admin@nmo.co.ke",
+        username="Ryan",
+        email="ryan.makori@student.moringaschool.com",
         role="admin"
     )
     admin.password = "Admin123!"
 
     manager = User(
-        username="manager",
-        email="manager@nmo.co.ke",
+        username="James",
+        email="james.karanja4@student.moringaschool.com",
         role="manager"
     )
     manager.password = "Manager123!"
 
     inspector = User(
-        username="inspector",
-        email="inspector@nmo.co.ke",
+        username="Emmanuel",
+        email="emmanuel.sum@student.moringaschool.com",
         role="inspector"
     )
     inspector.password = "Inspector123!"

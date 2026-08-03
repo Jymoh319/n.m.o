@@ -1,8 +1,8 @@
-"""updated data to be seeded
+"""changed administrator info
 
-Revision ID: a04227ea49b0
+Revision ID: 21c0063a8143
 Revises: 
-Create Date: 2026-07-30 23:36:10.950992
+Create Date: 2026-08-03 12:36:09.115123
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'a04227ea49b0'
+revision = '21c0063a8143'
 down_revision = None
 branch_labels = None
 depends_on = None

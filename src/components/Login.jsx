@@ -310,31 +310,6 @@ export default function Login() {
                 {loading ? "Signing In..." : "Sign In"}
               </button>
 
-              <div className="text-sm text-center text-slate-500 dark:text-slate-400">
-
-                Test Accounts
-
-                <div className="mt-3 space-y-2">
-
-                  <p>
-                    <strong>Admin</strong><br />
-                    admin@nmo.co.ke
-                  </p>
-
-                  <p>
-                    <strong>Manager</strong><br />
-                    manager@nmo.co.ke
-                  </p>
-
-                  <p>
-                    <strong>Inspector</strong><br />
-                    inspector@nmo.co.ke
-                  </p>
-
-                </div>
-
-              </div>
-
             </form>
 
           ) : (            <form onSubmit={handleRegister} className="space-y-5">

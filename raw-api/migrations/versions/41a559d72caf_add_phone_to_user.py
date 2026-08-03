@@ -1,8 +1,8 @@
-"""changed administrator info
+"""Add phone to User
 
-Revision ID: 21c0063a8143
+Revision ID: 41a559d72caf
 Revises: 
-Create Date: 2026-08-03 12:36:09.115123
+Create Date: 2026-08-03 12:55:57.219097
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '21c0063a8143'
+revision = '41a559d72caf'
 down_revision = None
 branch_labels = None
 depends_on = None

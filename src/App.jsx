@@ -1,60 +1,70 @@
-import { useState } from "react";
-import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
-import { ThemeProvider } from './context/ThemeContext';
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import { ThemeProvider } from "./context/ThemeContext";
+
 import Login from "./components/Login";
-import Sidebar from './components/Sidebar';
-import Header from './components/Header';
-import Dashboard from './components/Dashboard';
-import Certifications from './components/Certificate';
-import Shipping from './components/Shipping';
-import MineralSources from './components/MineralSources';
-import Records from './components/Records';
-import Harvesting from './components/Harvesting';
-import Settings from './components/Settings';
+import Sidebar from "./components/Sidebar";
+import Header from "./components/Header";
+
+import Dashboard from "./components/Dashboard";
+import Certifications from "./components/Certificate";
+import Shipping from "./components/Shipping";
+import MineralSources from "./components/MineralSources";
+import Records from "./components/Records";
+import Harvesting from "./components/Harvesting";
+import Settings from "./components/Settings";
 
 const pageTitles = {
-  '/': 'Dashboard',
-  '/certifications': 'Certifications',
-  '/shipping': 'Shipping',
-  '/mineral-sources': 'Mineral Sources',
-  '/records': 'Records',
-  '/harvesting': 'Harvesting',
-  '/settings': 'Settings',
+  "/": "Dashboard",
+  "/certifications": "Certificates",
+  "/shipping": "Verification",
+  "/mineral-sources": "Analytics",
+  "/records": "Reports",
+  "/harvesting": "Training",
+  "/settings": "Settings",
 };
 
 function Layout() {
   const location = useLocation();
-  const title = pageTitles[location.pathname] || 'Nairobi Mining Operations';
+  const title = pageTitles[location.pathname] || "N.M.O";
 
   return (
-    <div className="flex h-screen bg-slate-50 dark:bg-slate-950">
+    <div className="relative flex h-screen overflow-hidden bg-[#0A1628]">
+      {/* Full-screen mining hero background */}
+      <div className="mining-bg" />
+
+      {/* Sidebar */}
       <Sidebar />
-      <div className="flex-1 flex flex-col overflow-hidden">
+
+      {/* Main Content */}
+      <div className="flex flex-1 flex-col overflow-hidden">
         <Header title={title} />
-        <main className="flex-1 overflow-y-auto p-6">
-          <Routes>
-            <Route path="/" element={<Dashboard />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/certifications" element={<Certifications />} />
-            <Route path="/shipping" element={<Shipping />} />
-            <Route path="/mineral-sources" element={<MineralSources />} />
-            <Route path="/records" element={<Records />} />
-            <Route path="/harvesting" element={<Harvesting />} />
-            <Route path="/settings" element={<Settings />} />
-          </Routes>
+
+        <main className="relative flex-1 overflow-y-auto px-4 md:px-6 lg:px-8 pb-8">
+          <div className="mx-auto max-w-[1600px]">
+            <Routes>
+              <Route path="/" element={<Dashboard />} />
+              <Route path="/certifications" element={<Certifications />} />
+              <Route path="/shipping" element={<Shipping />} />
+              <Route path="/mineral-sources" element={<MineralSources />} />
+              <Route path="/records" element={<Records />} />
+              <Route path="/harvesting" element={<Harvesting />} />
+              <Route path="/settings" element={<Settings />} />
+            </Routes>
+          </div>
         </main>
       </div>
     </div>
   );
 }
 
-// Removed the role for login on landing page
-
 function App() {
   return (
     <ThemeProvider>
       <BrowserRouter>
-        <Layout />
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="/*" element={<Layout />} />
+        </Routes>
       </BrowserRouter>
     </ThemeProvider>
   );

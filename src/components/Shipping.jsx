@@ -2,33 +2,23 @@ import { useEffect, useState } from "react";
 import {
   MapPin,
   ArrowRight,
+  ShieldCheck,
   Search,
   Filter,
-  CheckCircle,
-  Clock,
-  Truck,
 } from "lucide-react";
+import GlassInput from "./ui/GlassInput";
+import GlassBadge from "./ui/GlassBadge";
+import GlassButton from "./ui/GlassButton";
+import Table from "./ui/Table";
 
 const API = "https://nmo-production.up.railway.app/api";
 
-const statusConfig = {
-  Delivered: {
-    icon: CheckCircle,
-    color:
-      "text-emerald-600 dark:text-emerald-400 bg-emerald-100 dark:bg-emerald-900/30",
-  },
-
-  "In Transit": {
-    icon: Truck,
-    color:
-      "text-primary-600 dark:text-primary-400 bg-primary-100 dark:bg-primary-900/30",
-  },
-
-  Pending: {
-    icon: Clock,
-    color:
-      "text-amber-600 dark:text-amber-400 bg-amber-100 dark:bg-amber-900/30",
-  },
+const statusVariant = (status) => {
+  if (status === "Delivered") return "verified";
+  if (status === "In Transit") return "pending";
+  if (status === "Pending") return "pending";
+  if (status === "Rejected") return "rejected";
+  return "neutral";
 };
 
 export default function Shipping() {
@@ -61,146 +51,86 @@ export default function Shipping() {
     return matchesSearch && matchesFilter;
   });
 
+  const columns = [
+    "Shipment Code",
+    "Cargo",
+    "Route",
+    "Quantity",
+    "Vessel",
+    "Shipment Date",
+    "ETA",
+    "Status",
+    "Action",
+  ];
+
   return (
-  <div className="space-y-6">
-    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-      <div className="relative flex-1 max-w-md">
-        <Search
-          className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
-          size={18}
-        />
+    <div className="space-y-6">
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+        <div className="flex flex-col gap-1">
+          <div className="flex items-center gap-3">
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-[#8B5CF6] to-[#6D28D9] shadow-[0_14px_40px_-14px_rgba(139,92,246,0.9)]">
+              <ShieldCheck size={24} className="text-white" />
+            </div>
+            <div>
+              <h2 className="text-xl font-extrabold text-white">Verification</h2>
+              <p className="text-sm text-[#7C8CA3]">Verify shipments &amp; certificates in transit</p>
+            </div>
+          </div>
+        </div>
 
-        <input
-          type="text"
-          placeholder="Search shipments..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="w-full pl-10 pr-4 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500"
-        />
+        <div className="flex items-center gap-2">
+          <Filter size={18} className="text-[#7C8CA3]" />
+
+          <select
+            value={filter}
+            onChange={(e) => setFilter(e.target.value)}
+            className="input w-auto min-w-[160px] px-3 py-2 text-sm"
+          >
+            <option value="all">All Statuses</option>
+            <option value="In Transit">In Transit</option>
+            <option value="Delivered">Delivered</option>
+            <option value="Pending">Pending</option>
+          </select>
+        </div>
       </div>
 
-      <div className="flex items-center gap-2">
-        <Filter size={18} className="text-slate-500" />
-
-        <select
-          value={filter}
-          onChange={(e) => setFilter(e.target.value)}
-          className="px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500"
-        >
-          <option value="all">All Statuses</option>
-          <option value="In Transit">In Transit</option>
-          <option value="Delivered">Delivered</option>
-          <option value="Pending">Pending</option>
-        </select>
-      </div>
+      <Table
+        columns={columns}
+        data={filtered}
+        searchable
+        searchKeys={["shipment_code", "cargo"]}
+        searchPlaceholder="Search shipments..."
+        className="rounded-[26px]"
+        renderCell={(shipment) => (
+          <>
+            <td className="cell-strong">{shipment.shipment_code}</td>
+            <td>{shipment.cargo}</td>
+            <td>
+              <div className="flex items-center gap-1.5">
+                <MapPin size={14} className="text-[#7C8CA3]" />
+                <span className="truncate max-w-[110px]">{shipment.origin}</span>
+                <ArrowRight size={14} className="text-[#FDB813]" />
+                <span className="truncate max-w-[110px]">{shipment.destination}</span>
+              </div>
+            </td>
+            <td>{Number(shipment.quantity).toLocaleString()} tonnes</td>
+            <td>{`${shipment.vehicle.vehicle_name} (${shipment.vehicle.vehicle_type})`}</td>
+            <td>{shipment.shipment_date}</td>
+            <td>{shipment.estimated_arrival}</td>
+            <td>
+              <GlassBadge
+                label={shipment.status}
+                variant={statusVariant(shipment.status)}
+              />
+            </td>
+            <td>
+              <GlassButton variant="purple" size="sm" icon={<ShieldCheck size={15} />}>
+                Verify
+              </GlassButton>
+            </td>
+          </>
+        )}
+      />
     </div>
-
-    <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
-      <div className="overflow-x-auto">
-        <table className="w-full text-left">
-          <thead className="bg-slate-50 dark:bg-slate-900/50 border-b border-slate-200 dark:border-slate-700">
-            <tr>
-              <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">
-                Shipment Code
-              </th>
-
-              <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">
-                Cargo
-              </th>
-
-              <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">
-                Route
-              </th>
-
-              <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">
-                Quantity
-              </th>
-
-              <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">
-                Vessel
-              </th>
-
-              <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">
-                Shipment Date
-              </th>
-
-              <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">
-                ETA
-              </th>
-
-              <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">
-                Status
-              </th>
-            </tr>
-          </thead>
-
-          <tbody className="divide-y divide-slate-200 dark:divide-slate-700">
-            {filtered.map((shipment) => {
-              const status =
-                statusConfig[shipment.status] ?? statusConfig["Pending"];
-
-              const StatusIcon = status.icon;
-
-              return (
-                <tr
-                  key={shipment.shipment_id}
-                  className="hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors"
-                >
-                  <td className="px-4 py-3 font-medium text-slate-800 dark:text-white">
-                    {shipment.shipment_code}
-                  </td>
-
-                  <td className="px-4 py-3 text-slate-600 dark:text-slate-300">
-                    {shipment.cargo}
-                  </td>
-
-                  <td className="px-4 py-3 text-slate-600 dark:text-slate-300">
-                    <div className="flex items-center gap-1">
-                      <MapPin size={14} className="text-slate-400" />
-
-                      <span className="truncate max-w-[120px]">
-                        {shipment.origin}
-                      </span>
-
-                      <ArrowRight size={14} className="text-slate-400" />
-
-                      <span className="truncate max-w-[120px]">
-                        {shipment.destination}
-                      </span>
-                    </div>
-                  </td>
-
-                  <td className="px-4 py-3 text-slate-600 dark:text-slate-300">
-                    {Number(shipment.quantity).toLocaleString()} tonnes
-                  </td>
-
-                  <td className="px-4 py-3 text-slate-600 dark:text-slate-300">
-                    `${shipment.vehicle.vehicle_name} (${shipment.vehicle.vehicle_type})`
-                  </td>
-
-                  <td className="px-4 py-3 text-slate-600 dark:text-slate-300">
-                    {shipment.shipment_date}
-                  </td>
-
-                  <td className="px-4 py-3 text-slate-600 dark:text-slate-300">
-                    {shipment.estimated_arrival}
-                  </td>
-
-                  <td className="px-4 py-3">
-                    <span
-                      className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium ${status.color}`}
-                    >
-                      <StatusIcon size={12} />
-                      {shipment.status}
-                    </span>
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-);
+  );
 }

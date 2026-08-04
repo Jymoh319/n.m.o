@@ -1,83 +1,71 @@
-import { NavLink } from "react-router-dom";
-import { useTheme } from "../context/ThemeContext";
+import { NavLink, useNavigate } from "react-router-dom";
 import {
   LayoutDashboard,
   Award,
-  Ship,
-  Mountain,
-  ClipboardList,
-  Wheat,
+  GraduationCap,
+  ShieldCheck,
+  FileBarChart,
+  BarChart3,
   Settings,
-  Sun,
-  Moon,
+  LogOut,
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
 import { useState } from "react";
+import Logo from "./ui/Logo";
 
 const navItems = [
-  {
-    to: "/",
-    label: "Dashboard",
-    icon: LayoutDashboard,
-  },
-  {
-    to: "/certifications",
-    label: "Certifications",
-    icon: Award,
-  },
-  {
-    to: "/shipping",
-    label: "Shipping",
-    icon: Ship,
-  },
-  {
-    to: "/mineral-sources",
-    label: "Mineral Sources",
-    icon: Mountain,
-  },
-  {
-    to: "/records",
-    label: "Records",
-    icon: ClipboardList,
-  },
-  {
-    to: "/harvesting",
-    label: "Harvesting",
-    icon: Wheat,
-  },
+  { to: "/", label: "Dashboard", icon: LayoutDashboard },
+  { to: "/certifications", label: "Certificates", icon: Award },
+  { to: "/harvesting", label: "Training", icon: GraduationCap },
+  { to: "/shipping", label: "Verification", icon: ShieldCheck },
+  { to: "/records", label: "Reports", icon: FileBarChart },
+  { to: "/mineral-sources", label: "Analytics", icon: BarChart3 },
+  { to: "/settings", label: "Settings", icon: Settings },
 ];
 
 export default function Sidebar() {
-  const { theme, toggleTheme } = useTheme();
+  const navigate = useNavigate();
   const [collapsed, setCollapsed] = useState(false);
+
+  const isAuthenticated = Boolean(localStorage.getItem("token"));
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    navigate("/login?mode=signin");
+  };
 
   return (
     <aside
-      className={`flex flex-col transition-all duration-300 ${
-        collapsed ? "w-16" : "w-64"
-      } bg-slate-900 dark:bg-slate-950 border-r border-slate-700 dark:border-slate-800 h-screen sticky top-0`}
+      className={`hidden md:flex flex-col overflow-hidden transition-all duration-500 ${collapsed ? "w-[84px]" : "w-[280px]"} panel-strong rounded-3xl mx-4 my-4 lg:mx-5 lg:my-5 h-[calc(100vh-32px)] lg:h-[calc(100vh-40px)] sticky top-4 z-30`}
     >
-      <div className="flex items-center justify-between h-16 px-4 border-b border-slate-700 dark:border-slate-800">
-        {!collapsed && (
-          <span className="text-lg font-bold text-white truncate">
-            Nairobi Mining Operations
-          </span>
+      <div className={`flex items-center justify-between gap-2 px-4 py-5 ${collapsed ? "px-2" : ""}`}>
+        {!collapsed ? (
+          <Logo size="sm" />
+        ) : (
+          <div className="mx-auto flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-[rgba(253,184,19,0.4)] bg-gradient-to-br from-[#0F4C81] to-[#0A2A47] overflow-hidden">
+            <img
+              src="/nmo-logo.png"
+              alt="N.M.O"
+              className="h-full w-full object-contain p-1"
+              draggable={false}
+            />
+          </div>
         )}
 
         <button
           onClick={() => setCollapsed(!collapsed)}
-          className="p-1 rounded-md text-slate-400 hover:text-white hover:bg-slate-700 transition-colors"
+          className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-[rgba(255,255,255,0.1)] bg-white/5 text-[#B9C6D6] transition hover:bg-white/10 hover:text-white ${collapsed ? "absolute -right-3 top-5 z-10 h-8 w-8" : ""}`}
+          aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
         >
-          {collapsed ? (
-            <ChevronRight size={18} />
-          ) : (
-            <ChevronLeft size={18} />
-          )}
+          {collapsed ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
         </button>
       </div>
 
-      <nav className="flex-1 py-4 space-y-1 px-2">
+      <div className="mx-4 mb-4 h-px shrink-0 bg-gradient-to-r from-transparent via-[rgba(253,184,19,0.3)] to-transparent" />
+
+      <nav className="flex-1 space-y-1.5 overflow-y-auto overflow-x-hidden px-3 py-2">
         {navItems.map((item) => {
           const Icon = item.icon;
 
@@ -86,62 +74,45 @@ export default function Sidebar() {
               key={item.to}
               to={item.to}
               className={({ isActive }) =>
-                `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
-                  isActive
-                    ? "bg-primary-600 text-white"
-                    : "text-slate-300 hover:bg-slate-800 hover:text-white"
-                }`
+                `nav-link ${isActive ? "active" : ""} ${collapsed ? "justify-center px-0" : ""}`
               }
               title={collapsed ? item.label : undefined}
             >
-              <Icon size={20} />
-
-              {!collapsed && <span>{item.label}</span>}
+              <span className="nav-icon shrink-0">
+                <Icon size={20} />
+              </span>
+              {!collapsed && <span className="truncate">{item.label}</span>}
             </NavLink>
           );
         })}
+
+        {isAuthenticated && (
+          <button
+            onClick={handleLogout}
+            className={`nav-link w-full ${collapsed ? "justify-center px-0" : ""}`}
+            title={collapsed ? "Logout" : undefined}
+          >
+            <span className="nav-icon shrink-0">
+              <LogOut size={20} />
+            </span>
+            {!collapsed && <span className="truncate">Logout</span>}
+          </button>
+        )}
       </nav>
 
-      <div className="p-2 border-t border-slate-700 dark:border-slate-800 space-y-1">
-        <NavLink
-          to="/settings"
-          className={({ isActive }) =>
-            `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
-              isActive
-                ? "bg-primary-600 text-white"
-                : "text-slate-300 hover:bg-slate-800 hover:text-white"
-            }`
-          }
-          title={collapsed ? "Settings" : undefined}
-        >
-          <Settings size={20} />
-
-          {!collapsed && <span>Settings</span>}
-        </NavLink>
-
-        <button
-          onClick={toggleTheme}
-          className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-300 hover:bg-slate-800 hover:text-white transition-colors w-full"
-          title={
-            collapsed
-              ? theme === "dark"
-                ? "Light Mode"
-                : "Dark Mode"
-              : undefined
-          }
-        >
-          {theme === "dark" ? (
-            <Sun size={20} />
-          ) : (
-            <Moon size={20} />
-          )}
-
-          {!collapsed && (
-            <span>
-              {theme === "dark" ? "Light Mode" : "Dark Mode"}
-            </span>
-          )}
-        </button>
+      <div className={`mx-4 my-4 rounded-2xl border border-[rgba(253,184,19,0.2)] bg-gradient-to-br from-[#0F4C81]/40 to-[#0A2A47]/60 ${collapsed ? "p-2" : "p-4"}`}>
+        {!collapsed ? (
+          <>
+            <p className="text-sm font-bold text-[#FDB813]">N.M.O</p>
+            <p className="mt-1 text-xs leading-relaxed text-[#B9C6D6]">
+              Mining training &amp; certificate management.
+            </p>
+          </>
+        ) : (
+          <div className="flex justify-center">
+            <span className="h-2 w-2 rounded-full bg-[#FDB813] shadow-[0_0_12px_rgba(253,184,19,0.8)]" />
+          </div>
+        )}
       </div>
     </aside>
   );

@@ -1,35 +1,26 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   Mountain,
   MapPin,
   Layers,
   Ruler,
   Droplets,
+  BarChart3,
   Search,
   Filter,
 } from "lucide-react";
+import { motion } from "framer-motion";
+import GlassBadge from "./ui/GlassBadge";
+import GlassInput from "./ui/GlassInput";
+import StatCard from "./ui/StatCard";
 
-const statusConfig = {
-  Active: {
-    color:
-      "text-emerald-600 dark:text-emerald-400 bg-emerald-100 dark:bg-emerald-900/30",
-    label: "Active",
-  },
-  Exploration: {
-    color:
-      "text-primary-600 dark:text-primary-400 bg-primary-100 dark:bg-primary-900/30",
-    label: "Exploration",
-  },
-  Maintenance: {
-    color:
-      "text-amber-600 dark:text-amber-400 bg-amber-100 dark:bg-amber-900/30",
-    label: "Maintenance",
-  },
-  Depleted: {
-    color:
-      "text-rose-600 dark:text-rose-400 bg-rose-100 dark:bg-rose-900/30",
-    label: "Depleted",
-  },
+const statusVariant = (status) => {
+  if (status === "Active") return "verified";
+  if (status === "Exploration") return "blue";
+  if (status === "Maintenance") return "pending";
+  if (status === "Depleted") return "expired";
+  if (status === "Rejected") return "rejected";
+  return "neutral";
 };
 
 export default function MineralSources() {
@@ -65,31 +56,62 @@ export default function MineralSources() {
     return matchesSearch && matchesFilter;
   });
 
+  const stats = useMemo(() => {
+    const active = sources.filter((s) => s.status === "Active").length;
+    const totalYield = sources.reduce(
+      (sum, s) => sum + Number(s.yield_estimate || 0),
+      0
+    );
+    const counties = new Set(sources.map((s) => s.county)).size;
+
+    return [
+      {
+        label: "Mining Sites",
+        value: sources.length,
+        gradient: "from-[#0F4C81] to-[#2196F3]",
+        trendLabel: "Total sites",
+      },
+      {
+        label: "Active Sites",
+        value: active,
+        gradient: "from-[#2ECC71] to-[#1E9E58]",
+        trendLabel: "Currently active",
+      },
+      {
+        label: "Est. Yields",
+        value: totalYield,
+        gradient: "from-[#FDB813] to-[#FF9800]",
+        trendLabel: "Combined tonnes",
+      },
+      {
+        label: "Counties",
+        value: counties,
+        gradient: "from-[#8B5CF6] to-[#6D28D9]",
+        trendLabel: "Geographic coverage",
+      },
+    ];
+  }, [sources]);
+
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div className="relative flex-1 max-w-md">
-          <Search
-            className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
-            size={18}
-          />
-
-          <input
-            type="text"
-            placeholder="Search mining sites..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500"
-          />
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+        <div className="flex items-center gap-3">
+          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-[#4F46E5] to-[#3730A3] shadow-[0_14px_40px_-14px_rgba(79,70,229,0.9)]">
+            <BarChart3 size={24} className="text-white" />
+          </div>
+          <div>
+            <h2 className="text-xl font-extrabold text-white">Analytics</h2>
+            <p className="text-sm text-[#7C8CA3]">Mining site intelligence &amp; analytics</p>
+          </div>
         </div>
 
         <div className="flex items-center gap-2">
-          <Filter size={18} className="text-slate-500" />
+          <Filter size={18} className="text-[#7C8CA3]" />
 
           <select
             value={filter}
             onChange={(e) => setFilter(e.target.value)}
-            className="px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500"
+            className="input w-auto min-w-[160px] px-3 py-2 text-sm"
           >
             <option value="all">All Statuses</option>
             <option value="active">Active</option>
@@ -100,84 +122,68 @@ export default function MineralSources() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-        {filtered.map((source) => {
-          const status =
-            statusConfig[source.status] || {
-              color:
-                "text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-700",
-              label: source.status,
-            };
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        {stats.map((stat, i) => (
+          <StatCard key={stat.label} {...stat} delay={i * 0.06} />
+        ))}
+      </div>
 
-          return (
-            <div
-              key={source.site_id}
-              className="bg-white dark:bg-slate-800 rounded-xl p-5 border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-md transition-shadow"
-            >
-              <div className="flex items-start justify-between mb-3">
-                <div className="p-2 rounded-lg bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400">
-                  <Mountain size={20} />
-                </div>
-
-                <span
-                  className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium ${status.color}`}
-                >
-                  {status.label}
-                </span>
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+        {filtered.map((source, idx) => (
+          <motion.div
+            key={source.site_id}
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: idx * 0.04 }}
+            className="premium-card rounded-[26px] p-6"
+          >
+            <div className="flex items-start justify-between mb-4">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-[#0F4C81] to-[#1E6FB8] shadow-[0_12px_36px_-12px_rgba(15,76,129,0.9)]">
+                <Mountain size={22} className="text-white" />
               </div>
 
-              <h3 className="text-base font-semibold text-slate-800 dark:text-white mb-1">
-                {source.site_name}
-              </h3>
+              <GlassBadge
+                label={source.status}
+                variant={statusVariant(source.status)}
+              />
+            </div>
 
-              <div className="flex items-center gap-1 text-xs text-slate-500 dark:text-slate-400 mb-3">
-                <MapPin size={14} />
-                {source.latitude}, {source.longitude}
+            <h3 className="text-lg font-bold text-white mb-1">{source.site_name}</h3>
+
+            <div className="flex items-center gap-2 text-sm text-[#7C8CA3] mb-4">
+              <MapPin size={14} />
+              {source.latitude}, {source.longitude}
+            </div>
+
+            <div className="grid grid-cols-2 gap-3 text-sm">
+              <div className="flex items-center gap-2 rounded-xl bg-white/[0.04] border border-[rgba(255,255,255,0.06)] px-3 py-2.5">
+                <Ruler size={15} className="text-[#FDB813]" />
+                <span className="text-[#B9C6D6]">Depth: {source.depth}</span>
               </div>
 
-              <div className="space-y-3">
-                <div>
-                  <p className="text-xs font-medium text-slate-500 dark:text-slate-400 mb-1.5">
-                    County
-                  </p>
+              <div className="flex items-center gap-2 rounded-xl bg-white/[0.04] border border-[rgba(255,255,255,0.06)] px-3 py-2.5">
+                <Layers size={15} className="text-[#2ECC71]" />
+                <span className="text-[#B9C6D6]">Area: {source.area}</span>
+              </div>
 
-                  <span className="px-2 py-1 rounded-md text-xs font-medium bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300">
-                    {source.county}
-                  </span>
-                </div>
+              <div className="flex items-center gap-2 rounded-xl bg-white/[0.04] border border-[rgba(255,255,255,0.06)] px-3 py-2.5">
+                <Droplets size={15} className="text-[#2196F3]" />
+                <span className="text-[#B9C6D6]">Water: {source.water_table}</span>
+              </div>
 
-                <div className="grid grid-cols-2 gap-3 text-xs">
-                  <div className="flex items-center gap-2">
-                    <Ruler size={14} className="text-slate-400" />
-                    <span className="text-slate-600 dark:text-slate-300">
-                      Depth: {source.depth}
-                    </span>
-                  </div>
-
-                  <div className="flex items-center gap-2">
-                    <Layers size={14} className="text-slate-400" />
-                    <span className="text-slate-600 dark:text-slate-300">
-                      Area: {source.area}
-                    </span>
-                  </div>
-
-                  <div className="flex items-center gap-2">
-                    <Droplets size={14} className="text-slate-400" />
-                    <span className="text-slate-600 dark:text-slate-300">
-                      Water: {source.water_table}
-                    </span>
-                  </div>
-                </div>
-
-                <div className="pt-2 border-t border-slate-100 dark:border-slate-700">
-                  <p className="text-sm font-medium text-slate-700 dark:text-slate-200">
-                    Yield: {source.yield_estimate}
-                  </p>
-                </div>
+              <div className="flex items-center gap-2 rounded-xl bg-white/[0.04] border border-[rgba(255,255,255,0.06)] px-3 py-2.5">
+                <MapPin size={15} className="text-[#FF9800]" />
+                <span className="text-[#B9C6D6]">{source.county}</span>
               </div>
             </div>
-          );
-        })}
+
+            <div className="mt-4 rounded-xl border border-[rgba(253,184,19,0.25)] bg-gradient-to-r from-[rgba(253,184,19,0.1)] to-transparent px-4 py-3">
+              <p className="text-sm font-bold text-[#FDB813]">
+                Yield: {source.yield_estimate}
+              </p>
+            </div>
+          </motion.div>
+        ))}
       </div>
     </div>
   );

@@ -1,32 +1,18 @@
-import { createContext, useContext, useEffect, useState } from 'react';
-
+/* eslint-disable react-refresh/only-export-components */
+import { createContext, useContext, useEffect } from 'react';
 
 const ThemeContext = createContext();
 
 export function ThemeProvider({ children }) {
-  const [theme, setTheme] = useState(() => {
-    if (typeof window !== 'undefined') {
-      return localStorage.getItem('theme') || 'dark';
-    }
-    return 'dark';
-  });
-
+  // N.M.O uses a permanent dark theme — no light/dark toggle.
   useEffect(() => {
     const root = window.document.documentElement;
-    if (theme === 'dark') {
-      root.classList.add('dark');
-    } else {
-      root.classList.remove('dark');
-    }
-    localStorage.setItem('theme', theme);
-  }, [theme]);
-
-  const toggleTheme = () => {
-    setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'));
-  };
+    root.classList.add('dark');
+    localStorage.setItem('theme', 'dark');
+  }, []);
 
   return (
-    <ThemeContext.Provider value={{ theme, toggleTheme }}>
+    <ThemeContext.Provider value={{ theme: 'dark' }}>
       {children}
     </ThemeContext.Provider>
   );
@@ -39,3 +25,4 @@ export function useTheme() {
   }
   return context;
 }
+

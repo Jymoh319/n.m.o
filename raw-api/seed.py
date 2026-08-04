@@ -1,4 +1,5 @@
-from datetime import date
+from datetime import date, datetime, timedelta
+import secrets
 
 from app import create_app
 from extensions import db
@@ -11,6 +12,7 @@ from models.certificate import Certificate
 from models.harvest_record import HarvestRecord
 from models.shipment import Shipment
 from models.site_record import SiteRecord
+from models.invitation import Invitation
 
 app = create_app()
 
@@ -510,6 +512,42 @@ with app.app_context():
     ]
 
     db.session.add_all(site_records)
+    db.session.commit()
+
+        # ---------------- INVITATIONS ----------------
+
+    invitations = [
+
+        Invitation(
+            email="new.worker@student.moringaschool.com",
+            role="worker",
+            token=secrets.token_urlsafe(32),
+            accepted=False,
+            invited_by=admin.user_id,
+            expires_at=datetime.utcnow() + timedelta(days=2)
+        ),
+
+        Invitation(
+            email="new.inspector@student.moringaschool.com",
+            role="inspector",
+            token=secrets.token_urlsafe(32),
+            accepted=False,
+            invited_by=admin.user_id,
+            expires_at=datetime.utcnow() + timedelta(days=2)
+        ),
+
+        Invitation(
+            email="new.manager@student.moringaschool.com",
+            role="manager",
+            token=secrets.token_urlsafe(32),
+            accepted=False,
+            invited_by=admin.user_id,
+            expires_at=datetime.utcnow() + timedelta(days=2)
+        )
+
+    ]
+
+    db.session.add_all(invitations)
     db.session.commit()
 
     print("Database seeded successfully!")

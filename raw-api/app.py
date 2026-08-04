@@ -3,7 +3,8 @@ from flask_restful import Api
 from flask_cors import CORS
 
 from config import Config
-from extensions import db, ma, bcrypt, jwt, migrate
+from extensions import db, ma, bcrypt, jwt, migrate, oauth, mail
+from services.email_service import send_email
 
 from resources.auth_resource import (
     RegisterResource,
@@ -21,6 +22,7 @@ from resources.vehicle_resource import VehicleListResource, VehicleResource
 from resources.shipment_resource import ShipmentListResource, ShipmentResource
 from resources.site_record_resource import SiteRecordListResource, SiteRecordResource
 from resources.google_auth_resource import GoogleLoginResource, GoogleCallbackResource
+from resources.invitation_resource import InvitationResource
 
 
 def create_app():
@@ -34,6 +36,18 @@ def create_app():
     ma.init_app(app)
     bcrypt.init_app(app)
     jwt.init_app(app)
+    oauth.init_app(app)
+    mail.init_app(app)
+
+    google = oauth.register(
+        name="google",
+        client_id=app.config["GOOGLE_CLIENT_ID"],
+        client_secret=app.config["GOOGLE_CLIENT_SECRET"],
+        server_metadata_url="https://accounts.google.com/.well-known/openid-configuration",
+        client_kwargs={
+            "scope": "openid email profile"
+        }
+    )
 
     api = Api(app)
 
@@ -95,6 +109,10 @@ def create_app():
 
     api.add_resource(GoogleLoginResource, "/api/auth/google")
     api.add_resource(GoogleCallbackResource, "/api/auth/google/callback")
+
+    # ---------- Invitations ----------
+
+    api.add_resource(InvitationResource, "/api/invitations")
 
     return app
 

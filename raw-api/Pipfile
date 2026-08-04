@@ -18,6 +18,8 @@ psycopg2-binary = "*"
 flask-jwt-extended = "*"
 authlib = "*"
 python-dotenv = "*"
+flask-mail = "*"
+requests = "*"
 
 [dev-packages]
 

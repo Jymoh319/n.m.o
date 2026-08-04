@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { Eye, EyeOff, Moon, Sun, ShieldCheck, Award, Lock } from "lucide-react";
-import { useTheme } from "../context/ThemeContext";
+import { Eye, EyeOff, ShieldCheck, Award, Lock } from "lucide-react";
 import API from "./api";
 import GlassButton from "./ui/GlassButton";
 import Logo from "./ui/Logo";
@@ -9,7 +8,6 @@ import Logo from "./ui/Logo";
 export default function Login() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { theme, toggleTheme } = useTheme();
 
   const [loginData, setLoginData] = useState({ email: "", password: "" });
   const [registerData, setRegisterData] = useState({ username: "", email: "", password: "", confirmPassword: "" });
@@ -35,34 +33,62 @@ export default function Login() {
   };
 
   const handleLogin = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setError("");
-    setSuccess("");
+   e.preventDefault();
 
-    try {
-      const response = await fetch(`${API}/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: loginData.email.trim(), password: loginData.password }),
-      });
+   setLoading(true);
+   setError("");
+   setSuccess("");
 
-      const data = await response.json();
+   try {
+     const response = await fetch(`${API}/login`, {
+       method: "POST",
+       headers: {
+         "Content-Type": "application/json",
+       },
+       body: JSON.stringify({
+         email: loginData.email.trim(),
+         password: loginData.password,
+        }),
+     });
 
-      if (!response.ok) {
-        throw new Error(data.message || data.description || "Login failed.");
-      }
+     const data = await response.json();
 
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("user", JSON.stringify({ username: data.user.username, email: data.user.email, role: data.user.role }));
-      navigate("/");
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
+     if (!response.ok) {
+       throw new Error(
+         data.message ||
+         data.description ||
+         "Login failed."
+       );
+     }
 
+     localStorage.setItem(
+       "token",
+       data.access_token
+     );
+
+     localStorage.setItem(
+       "user",
+       JSON.stringify(data.user)
+     );
+
+     switch (data.user.role) {
+       case "admin":
+       case "manager":
+       case "inspector":
+       case "worker":
+         navigate("/dashboard");
+         break;
+
+       default:
+         navigate("/");
+     }
+ 
+   } catch (err) {
+     setError(err.message);
+   } finally {
+     setLoading(false);
+   }
+ };
   const handleRegister = async (e) => {
     e.preventDefault();
     setError("");
@@ -112,14 +138,10 @@ export default function Login() {
           <div className="flex items-center gap-5">
             <Logo />
             <div>
-              <h1 className="text-2xl font-extrabold text-white">MineCert Pro</h1>
+              <h1 className="text-2xl font-extrabold text-white">NMO</h1>
               <p className="text-sm mt-1 text-[#7C8CA3]">Mining Certificate Management</p>
             </div>
           </div>
-
-          <GlassButton type="button" variant="ghost" className="rounded-[16px] px-4 py-2" onClick={toggleTheme}>
-            {theme === "dark" ? <Sun size={20} /> : <Moon size={20} />}
-          </GlassButton>
         </div>
 
         <div className="mt-8 flex mx-8 rounded-2xl border border-[rgba(255,255,255,0.1)] bg-white/[0.04] p-1">
@@ -155,9 +177,19 @@ export default function Login() {
 
           {isLogin ? (
             <form onSubmit={handleLogin} className="space-y-5">
+              <button
+                type="button"
+                onClick={() =>
+                  window.location.href =
+                    `${API}/api/auth/google`
+                }
+                className="btn btn-blue w-full mt-4"
+              >
+                Continue with Google
+              </button>
               <div>
                 <label className="block mb-2 text-sm font-semibold text-[#B9C6D6]">Email</label>
-                <input type="email" name="email" required value={loginData.email} onChange={handleLoginChange} placeholder="admin@minecert.pro" className="input w-full" />
+                <input type="email" name="email" required value={loginData.email} onChange={handleLoginChange} placeholder="example@email.com" className="input w-full" />
               </div>
 
               <div>
@@ -170,12 +202,38 @@ export default function Login() {
                 </div>
               </div>
 
+              <div className="flex justify-end">
+                <button
+                  type="button"
+                  onClick={() => navigate("/forgot-password")}
+                  className="text-sm text-[#FDB813] hover:underline"
+                >
+                  Forgot Password?
+                </button>
+              </div>
+
               <button type="submit" disabled={loading} className="btn btn-gold w-full text-[17px] disabled:opacity-50">
                 {loading ? "Signing In..." : "Sign In"}
               </button>
+              <p className="text-center text-sm text-[#7C8CA3]">
+                Don't have an account?{" "}
+                <button type="button" onClick={() => navigate("/login?mode=signup")} className="font-bold text-[#8B5CF6]">
+                  Request Access!
+                </button>
+              </p>
             </form>
           ) : (
             <form onSubmit={handleRegister} className="space-y-5">
+              <button
+                type="button"
+                onClick={() =>
+                  window.location.href =
+                    `${API}/api/auth/google`
+                }
+                className="btn btn-blue w-full mt-4"
+              >
+                Continue with Google
+              </button>
               <div>
                 <label className="block mb-2 text-sm font-semibold text-[#B9C6D6]">Username</label>
                 <input type="text" name="username" required value={registerData.username} onChange={handleRegisterChange} placeholder="Enter username" className="input w-full" />
@@ -227,7 +285,7 @@ export default function Login() {
         </div>
 
         <div className="border-t border-[rgba(255,255,255,0.08)] px-8 py-4 text-center text-sm text-[#7C8CA3]">
-          © {new Date().getFullYear()} MineCert Pro
+          © {new Date().getFullYear()} N.M.O
         </div>
       </div>
     </div>

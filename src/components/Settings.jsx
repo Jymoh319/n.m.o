@@ -1,5 +1,4 @@
 import { Link } from "react-router-dom";
-import { useTheme } from "../context/ThemeContext";
 import { useState } from "react";
 import {
   Sun,

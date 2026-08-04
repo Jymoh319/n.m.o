@@ -23,7 +23,10 @@ from resources.shipment_resource import ShipmentListResource, ShipmentResource
 from resources.site_record_resource import SiteRecordListResource, SiteRecordResource
 from resources.google_auth_resource import GoogleLoginResource, GoogleCallbackResource
 from resources.invitation_resource import InvitationResource
-
+from resources.accept_invitation_resource import AcceptInvitationResource
+from resources.forgot_password_resource import ForgotPasswordResource
+from resources.reset_password_resource import ResetPasswordResource
+from resources.settings_resource import SettingsResource
 
 def create_app():
     app = Flask(__name__)
@@ -39,7 +42,7 @@ def create_app():
     oauth.init_app(app)
     mail.init_app(app)
 
-    google = oauth.register(
+    oauth.register(
         name="google",
         client_id=app.config["GOOGLE_CLIENT_ID"],
         client_secret=app.config["GOOGLE_CLIENT_SECRET"],
@@ -113,6 +116,15 @@ def create_app():
     # ---------- Invitations ----------
 
     api.add_resource(InvitationResource, "/api/invitations")
+    api.add_resource(AcceptInvitationResource, "/api/invitations/accept")
+
+    # ---------- Password Resets ----------
+
+    api.add_resource(ForgotPasswordResource, "/forgot-password")
+    api.add_resource(ResetPasswordResource, "/reset-password")
+
+    # ---------- Settings ----------
+    api.add_resource(SettingsResource, "/api/settings")
 
     return app
 

@@ -67,25 +67,78 @@ class InvitationResource(Resource):
         )
 
         body = f"""
-Hello,
+<div style="max-width:650px;margin:auto;padding:30px;
+font-family:Arial,sans-serif;
+background:#ffffff;
+border-radius:18px;
+border:1px solid #dddddd;">
 
-You have been invited to join Nairobi Mining Operations.
+    <div style="text-align:center;">
 
-Assigned Role:
-{role.title()}
+        <img
+            src="https://n-m-o.vercel.app/nmo-intro.png"
+            width="230"
+            style="border-radius:20px;"
+        >
 
-Click the link below to accept your invitation.
+        <h2 style="color:#0f4c81;">
+            Nairobi Mining Operations
+        </h2>
 
-{invite_link}
+    </div>
 
-PS: This invitation expires in 48 hours.
+    <p>Hello,</p>
+
+    <p>
+        You have been invited to join
+        <strong>Nairobi Mining Operations</strong>.
+    </p>
+
+    <p>
+        <strong>Assigned Role:</strong>
+        {role.title()}
+    </p>
+
+    <p>
+        Click the button below to accept your invitation.
+    </p>
+
+    <div style="text-align:center;margin:40px 0;">
+
+        <a
+            href="{invite_link}"
+            style="
+                background:#0f4c81;
+                color:white;
+                padding:15px 30px;
+                text-decoration:none;
+                border-radius:12px;
+                font-weight:bold;
+            "
+        >
+            Accept Invitation
+        </a>
+
+    </div>
+
+    <p>
+        This invitation expires in
+        <strong>48 hours</strong>.
+    </p>
+
+    <hr>
+
+    <small style="color:#777;">
+        Nairobi Mining Operations © 2026
+    </small>
+
+</div>
 """
 
         send_email(
             recipient=email,
-            subject="Nairobi Mining Operations" \
-            "Invitation To Join Our Team!",
-            body=body
+            subject="Nairobi Mining Operations - Invitation To Join Our Team!",
+            html=body
         )
 
         return {

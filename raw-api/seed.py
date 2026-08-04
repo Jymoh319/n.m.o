@@ -13,6 +13,7 @@ from models.harvest_record import HarvestRecord
 from models.shipment import Shipment
 from models.site_record import SiteRecord
 from models.invitation import Invitation
+from models.settings import Settings
 
 app = create_app()
 
@@ -50,6 +51,45 @@ with app.app_context():
         inspector
     ])
 
+    db.session.commit()
+
+    # ---------------- SETTINGS ----------------
+
+    settings = [
+
+    Settings(
+        user_id=admin.user_id,
+        email_notifications=True,
+        shipment_alerts=True,
+        certification_renewals=False,
+        royalty_notifications=True,
+        two_factor_auth=False,
+        login_alerts=True
+    ),
+
+    Settings(
+        user_id=manager.user_id,
+        email_notifications=True,
+        shipment_alerts=True,
+        certification_renewals=True,
+        royalty_notifications=True,
+        two_factor_auth=True,
+        login_alerts=True
+    ),
+
+    Settings(
+        user_id=inspector.user_id,
+        email_notifications=False,
+        shipment_alerts=True,
+        certification_renewals=True,
+        royalty_notifications=False,
+        two_factor_auth=False,
+        login_alerts=True
+    )
+
+    ]
+
+    db.session.add_all(settings)
     db.session.commit()
 
     # ---------------- MINERALS ----------------

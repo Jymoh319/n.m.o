@@ -10,26 +10,30 @@ import {
 } from "recharts";
 import {
   Award,
-  Ship,
+  ShieldCheck,
+  GraduationCap,
+  Clock,
+  Download,
+  FileBarChart,
   Mountain,
-  ClipboardList,
-  Wheat,
-  TrendingUp,
-  TrendingDown,
-  DollarSign,
+  Truck,
+  Users,
 } from "lucide-react";
+import PremiumCard from "./ui/PremiumCard";
+import StatCard from "./ui/StatCard";
+import GlassBadge from "./ui/GlassBadge";
 
 const API = "https://nmo-production.up.railway.app/api";
 
 const chartColors = [
-  "#0ea5e9",
-  "#10b981",
-  "#f59e0b",
-  "#f43f5e",
-  "#8b5cf6",
-  "#14b8a6",
-  "#ef4444",
-  "#6366f1",
+  "#FDB813",
+  "#2ECC71",
+  "#2196F3",
+  "#0F4C81",
+  "#8B5CF6",
+  "#14B8A6",
+  "#E53935",
+  "#FF9800",
 ];
 
 export default function Dashboard() {
@@ -61,40 +65,54 @@ export default function Dashboard() {
 
   const stats = [
     {
+      label: "Employees",
+      value: records.length,
+      trend: "up",
+      icon: Users,
+      gradient: "from-[#0F4C81] to-[#2196F3]",
+      trendLabel: "Site records",
+    },
+    {
       label: "Certificates",
       value: certificates.length,
-      change: "",
       trend: "up",
       icon: Award,
-      color:
-        "bg-primary-100 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400",
+      gradient: "from-[#FDB813] to-[#FF9800]",
+      trendLabel: "Issued & verified",
     },
     {
-      label: "Shipments",
+      label: "Training",
+      value: harvests.length,
+      trend: "up",
+      icon: GraduationCap,
+      gradient: "from-[#2ECC71] to-[#1E9E58]",
+      trendLabel: "Training records",
+    },
+    {
+      label: "Pending Verification",
+      value: certificates.filter(
+        (c) => c.status === "Pending" || c.status === "Renewal"
+      ).length,
+      trend: "down",
+      icon: Clock,
+      gradient: "from-[#FF9800] to-[#F57C00]",
+      trendLabel: "Awaiting review",
+    },
+    {
+      label: "Downloads",
       value: shipments.length,
-      change: "",
       trend: "up",
-      icon: Ship,
-      color:
-        "bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400",
+      icon: Download,
+      gradient: "from-[#06B6D4] to-[#0891B2]",
+      trendLabel: "Verified downloads",
     },
     {
-      label: "Mining Sites",
+      label: "Reports",
       value: sites.length,
-      change: "",
       trend: "up",
-      icon: Mountain,
-      color:
-        "bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400",
-    },
-    {
-      label: "Site Records",
-      value: records.length,
-      change: "",
-      trend: "up",
-      icon: ClipboardList,
-      color:
-        "bg-rose-100 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400",
+      icon: FileBarChart,
+      gradient: "from-[#4F46E5] to-[#3730A3]",
+      trendLabel: "Generated reports",
     },
   ];
 
@@ -154,245 +172,175 @@ export default function Dashboard() {
 
     activity.sort((a, b) => new Date(b.time) - new Date(a.time));
 
-    return activity.slice(0, 5);
+    return activity.slice(0, 6);
   }, [shipments, certificates, records]);
 
+  const statusVariant = (status) => {
+    if (status === "Active" || status === "Verified") return "verified";
+    if (status === "Pending" || status === "Renewal") return "pending";
+    if (status === "Expired") return "expired";
+    if (status === "Rejected") return "rejected";
+    if (status === "In Transit") return "blue";
+    return "neutral";
+  };
+
   return (
-  <div className="space-y-6">
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-      {stats.map((stat) => {
-        const Icon = stat.icon;
-        const TrendIcon =
-          stat.trend === "up" ? TrendingUp : TrendingDown;
-
-        return (
-          <div
-            key={stat.label}
-            className="bg-white dark:bg-slate-800 rounded-xl p-5 border border-slate-200 dark:border-slate-700 shadow-sm"
-          >
-            <div className="flex items-start justify-between">
-              <div className="space-y-2">
-                <p className="text-sm text-slate-500 dark:text-slate-400">
-                  {stat.label}
-                </p>
-
-                <p className="text-2xl font-bold text-slate-800 dark:text-white">
-                  {stat.value}
-                </p>
-
-                <div className="flex items-center gap-1 text-xs">
-                  <TrendIcon
-                    size={14}
-                    className={
-                      stat.trend === "up"
-                        ? "text-emerald-500"
-                        : "text-rose-500"
-                    }
-                  />
-
-                  <span
-                    className={
-                      stat.trend === "up"
-                        ? "text-emerald-500"
-                        : "text-rose-500"
-                    }
-                  >
-                    Live
-                  </span>
-
-                  <span className="text-slate-400">
-                    backend data
-                  </span>
-                </div>
-              </div>
-
-              <div className={`p-2.5 rounded-lg ${stat.color}`}>
-                <Icon size={20} />
-              </div>
-            </div>
-          </div>
-        );
-      })}
-    </div>
-
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-      <div className="lg:col-span-2 bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm">
-        <div className="flex items-center justify-between mb-6">
-          <h3 className="text-lg font-semibold text-slate-800 dark:text-white">
-            Harvest Distribution
-          </h3>
-
-          <span className="text-sm text-slate-500 dark:text-slate-400">
-            Live Database
-          </span>
-        </div>
-
-        <div className="h-80">
-          <ResponsiveContainer width="100%" height="100%">
-            <PieChart>
-              <Pie
-                data={harvestData}
-                cx="50%"
-                cy="50%"
-                innerRadius={80}
-                outerRadius={120}
-                paddingAngle={4}
-                dataKey="value"
-                stroke="none"
-              >
-                {harvestData.map((entry, index) => (
-                  <Cell
-                    key={index}
-                    fill={entry.color}
-                  />
-                ))}
-              </Pie>
-
-              <Tooltip
-                contentStyle={{
-                  backgroundColor:
-                    theme === "dark"
-                      ? "#1e293b"
-                      : "#fff",
-
-                  border: `1px solid ${
-                    theme === "dark"
-                      ? "#334155"
-                      : "#e2e8f0"
-                  }`,
-
-                  borderRadius: "8px",
-
-                  color:
-                    theme === "dark"
-                      ? "#fff"
-                      : "#1e293b",
-                }}
-                formatter={(value, name) => [
-                  `${Number(value).toLocaleString()} tonnes`,
-                  name,
-                ]}
-              />
-
-              <Legend
-                verticalAlign="bottom"
-                height={36}
-                formatter={(value) => (
-                  <span
-                    style={{
-                      color:
-                        theme === "dark"
-                          ? "#cbd5e1"
-                          : "#475569",
-                    }}
-                  >
-                    {value}
-                  </span>
-                )}
-              />
-            </PieChart>
-          </ResponsiveContainer>
-        </div>
+    <div className="space-y-6">
+      {/* KPI Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-5">
+        {stats.map((stat, i) => (
+          <StatCard key={stat.label} {...stat} delay={i * 0.06} />
+        ))}
       </div>
 
-      <div className="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm">
-        <h3 className="text-lg font-semibold text-slate-800 dark:text-white mb-4">
-          Recent Activity
-        </h3>
+      {/* Charts row */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <PremiumCard className="lg:col-span-2 rounded-[26px] p-6">
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h3 className="text-lg font-bold text-white">
+                Training Distribution
+              </h3>
+              <p className="text-sm text-[#7C8CA3]">Mineral-wise production share</p>
+            </div>
+            <GlassBadge label="Live data" variant="gold" />
+          </div>
 
-        <div className="space-y-4">
-          {recentActivity.map((item, index) => (
-            <div
-              key={index}
-              className="flex items-start gap-3 p-3 rounded-lg"
-            >
+          <div className="h-80">
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie
+                  data={harvestData}
+                  cx="50%"
+                  cy="50%"
+                  innerRadius={80}
+                  outerRadius={120}
+                  paddingAngle={4}
+                  dataKey="value"
+                  stroke="none"
+                >
+                  {harvestData.map((entry, index) => (
+                    <Cell key={index} fill={entry.color} />
+                  ))}
+                </Pie>
+
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: "#0F2238",
+                    border: "1px solid rgba(255,255,255,0.12)",
+                    borderRadius: "14px",
+                    color: "#fff",
+                  }}
+                  formatter={(value, name) => [
+                    `${Number(value).toLocaleString()} tonnes`,
+                    name,
+                  ]}
+                />
+
+                <Legend
+                  verticalAlign="bottom"
+                  height={36}
+                  formatter={(value) => (
+                    <span style={{ color: "#B9C6D6", fontSize: "13px" }}>
+                      {value}
+                    </span>
+                  )}
+                />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
+        </PremiumCard>
+
+        <PremiumCard className="rounded-[26px] p-6">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h3 className="text-lg font-bold text-white">Recent Activity</h3>
+              <p className="text-sm text-[#7C8CA3]">Latest operations</p>
+            </div>
+          </div>
+
+          <div className="space-y-3">
+            {recentActivity.map((item, index) => (
               <div
-                className={`mt-0.5 w-2 h-2 rounded-full flex-shrink-0 ${
-                  item.type === "shipment"
-                    ? "bg-primary-500"
-                    : item.type === "certificate"
-                    ? "bg-emerald-500"
-                    : item.type === "record"
-                    ? "bg-amber-500"
-                    : "bg-slate-400"
-                }`}
-              />
+                key={index}
+                className="flex items-start gap-3 rounded-2xl border border-[rgba(255,255,255,0.06)] bg-white/[0.04] p-4 transition hover:bg-white/[0.07]"
+              >
+                <div className="mt-1.5 h-2 w-2 rounded-full bg-[#FDB813] flex-shrink-0 shadow-[0_0_10px_rgba(253,184,19,0.8)]" />
 
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-slate-800 dark:text-slate-100">
-                  {item.action}
-                </p>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-semibold text-[#E5ECF5] truncate">{item.action}</p>
+                  <p className="text-xs text-[#7C8CA3]">{item.target}</p>
+                </div>
 
-                <p className="text-xs text-slate-500 dark:text-slate-400">
-                  {item.target}
-                </p>
+                <span className="text-xs text-[#7C8CA3] whitespace-nowrap">{item.time}</span>
               </div>
+            ))}
 
-              <span className="text-xs text-slate-400 dark:text-slate-500 whitespace-nowrap">
-                {item.time}
-              </span>
+            {recentActivity.length === 0 && (
+              <p className="text-sm text-[#7C8CA3] py-8 text-center">
+                No recent activity yet.
+              </p>
+            )}
+          </div>
+        </PremiumCard>
+      </div>
+
+      {/* Bottom row */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <PremiumCard className="rounded-[26px] p-6">
+          <div className="flex items-center gap-4">
+            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-[#FDB813] to-[#C98A00] shadow-[0_14px_40px_-14px_rgba(253,184,19,0.8)]">
+              <Mountain className="text-[#1A1200]" size={26} />
             </div>
-          ))}
-        </div>
+
+            <div>
+              <p className="text-sm font-semibold uppercase tracking-wider text-[#7C8CA3]">
+                Total Production
+              </p>
+              <p className="mt-1 text-2xl font-extrabold text-white">
+                {totalHarvest.toLocaleString()} tonnes
+              </p>
+              <p className="text-sm text-[#7C8CA3]">Across all harvest records</p>
+            </div>
+          </div>
+        </PremiumCard>
+
+        <PremiumCard className="rounded-[26px] p-6">
+          <div className="flex items-center gap-4">
+            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-[#2ECC71] to-[#1E9E58] shadow-[0_14px_40px_-14px_rgba(46,204,113,0.8)]">
+              <Truck className="text-[#04210f]" size={26} />
+            </div>
+
+            <div>
+              <p className="text-sm font-semibold uppercase tracking-wider text-[#7C8CA3]">
+                Active Verification
+              </p>
+              <p className="mt-1 text-2xl font-extrabold text-white">
+                {shipments.filter((shipment) => shipment.status === "In Transit").length}
+              </p>
+              <p className="text-sm text-[#7C8CA3]">Pending verifications in queue</p>
+            </div>
+          </div>
+        </PremiumCard>
+
+        <PremiumCard className="rounded-[26px] p-6">
+          <div className="flex items-center gap-4">
+            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-[#0F4C81] to-[#2196F3] shadow-[0_14px_40px_-14px_rgba(15,76,129,0.9)]">
+              <Award className="text-white" size={26} />
+            </div>
+
+            <div>
+              <p className="text-sm font-semibold uppercase tracking-wider text-[#7C8CA3]">
+                Verified Certificates
+              </p>
+              <p className="mt-1 text-2xl font-extrabold text-white">
+                {certificates.filter((c) => c.status === "Active" || c.status === "Verified").length}
+              </p>
+              <p className="text-sm text-[#7C8CA3]">Active &amp; verified credentials</p>
+            </div>
+          </div>
+        </PremiumCard>
       </div>
     </div>
-
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      <div className="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm">
-        <h3 className="text-lg font-semibold text-slate-800 dark:text-white mb-4">
-          Total Harvest Volume
-        </h3>
-
-        <div className="flex items-center gap-4">
-          <div className="p-3 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg">
-            <DollarSign
-              className="text-emerald-600 dark:text-emerald-400"
-              size={24}
-            />
-          </div>
-
-          <div>
-            <p className="text-2xl font-bold text-slate-800 dark:text-white">
-              {totalHarvest.toLocaleString()} tonnes
-            </p>
-
-            <p className="text-sm text-slate-500 dark:text-slate-400">
-              Across all harvest records
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <div className="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm">
-        <h3 className="text-lg font-semibold text-slate-800 dark:text-white mb-4">
-          Active Shipments
-        </h3>
-
-        <div className="flex items-center gap-4">
-          <div className="p-3 bg-primary-100 dark:bg-primary-900/30 rounded-lg">
-            <Wheat
-              className="text-primary-600 dark:text-primary-400"
-              size={24}
-            />
-          </div>
-
-          <div>
-            <p className="text-2xl font-bold text-slate-800 dark:text-white">
-              {
-                shipments.filter(
-                  (shipment) =>
-                    shipment.status === "In Transit"
-                ).length
-              }
-            </p>
-
-            <p className="text-sm text-slate-500 dark:text-slate-400">
-              Shipments currently in transit
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-);
+  );
 }

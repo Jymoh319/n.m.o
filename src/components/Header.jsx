@@ -1,129 +1,114 @@
-import { Bell, Search, User } from 'lucide-react';
-import { useTheme } from '../context/ThemeContext';
-import { useNavigate } from "react-router-dom";
+import { Bell, Search, MessageSquare, User } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 import Profile from "./Profile";
+import GlassInput from "./ui/GlassInput";
+import Logo from "./ui/Logo";
 
-export default function Header({ title }) {
-  const {} = useTheme();
-  const navigate = useNavigate();
-  const [profileOpen, setProfileOpen] = useState(false);
-  const profileRef = useRef(null);
-  const user =
-    JSON.parse(localStorage.getItem("user")) || {};
-  const initials = user.username
-    ? user.username
-          .split(" ")
-          .map((name) => name[0])
-          .join("")
-          .toUpperCase()
-    : null;
+function useLiveDate() {
+  const [now, setNow] = useState(new Date());
 
   useEffect(() => {
-  const handleClickOutside = (event) => {
-        if (
-            profileRef.current &&
-            !profileRef.current.contains(event.target)
-        ) {
-            setProfileOpen(false);
-        }
+    const t = setInterval(() => setNow(new Date()), 1000 * 60);
+    return () => clearInterval(t);
+  }, []);
+
+  return now;
+}
+
+export default function Header({ title }) {
+  const [profileOpen, setProfileOpen] = useState(false);
+  const profileRef = useRef(null);
+  const now = useLiveDate();
+
+  const user = JSON.parse(localStorage.getItem("user")) || {};
+  const initials = user.username
+    ? user.username
+      .split(" ")
+      .map((name) => name[0])
+      .join("")
+      .toUpperCase()
+    : null;
+
+  const dateStr = now.toLocaleDateString(undefined, {
+    weekday: "long",
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  });
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (profileRef.current && !profileRef.current.contains(event.target)) {
+        setProfileOpen(false);
+      }
     };
 
-    document.addEventListener(
-        "mousedown",
-        handleClickOutside
-    );
-
-    return () => {
-        document.removeEventListener(
-            "mousedown",
-            handleClickOutside
-        );
-    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   return (
-  <header className="h-16 flex items-center justify-between px-6 bg-white dark:bg-slate-900 border-b border-slate-700">
+    <header className="relative z-20 mx-4 my-4 md:mx-6 lg:mx-8 flex flex-wrap items-center justify-between gap-3 rounded-3xl border border-[rgba(255,255,255,0.1)] bg-[rgba(15,34,56,0.35)] px-5 py-4 backdrop-blur-2xl shadow-[0_20px_60px_-30px_rgba(0,0,0,0.7)]">
+      <div className="flex items-center gap-4 min-w-0">
+        <div className="hidden xl:block">
+          <Logo size="sm" />
+        </div>
 
-    <h1 className="font-['Quantico'] text-2xl font-bold text-slate-800 dark:text-white">
-      {title}
-    </h1>
-
-    <div className="flex items-center gap-4">
-
-      {/* Search */}
-
-      <div className="relative hidden md:block">
-
-        <Search
-          size={17}
-          className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
-        />
-
-        <input
-          type="text"
-          placeholder="Search..."
-          className="w-72 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 pl-10 pr-4 py-2 text-sm text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
-        />
-
+        <div className="flex flex-col gap-0.5 min-w-0">
+          <span className="text-xs font-semibold uppercase tracking-[0.25em] text-[#FDB813]">
+            Welcome back, {user.username || "Operator"}
+          </span>
+          <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight text-white truncate">
+            {title}
+          </h1>
+          <span className="hidden sm:block text-sm text-[#B9C6D6]">{dateStr}</span>
+        </div>
       </div>
 
-      {/* Notifications */}
-
-      <button className="relative p-2 rounded-xl text-slate-500 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
-
-        <Bell size={21} />
-
-        <span className="absolute top-2 right-2 h-2 w-2 rounded-full bg-red-500" />
-
-      </button>
-
-      {/* Profile */}
-
-      <div
-        ref={profileRef}
-        className="relative"
-      >
+      <div className="flex flex-1 items-center justify-end gap-3">
+        <div className="hidden lg:block flex-1 max-w-sm">
+          <GlassInput
+            type="text"
+            placeholder="Search certificates, employees..."
+            className="text-sm"
+            icon={<Search size={18} className="text-[#7C8CA3]" />}
+          />
+        </div>
 
         <button
-          onClick={() => setProfileOpen(!profileOpen)}
-          className="flex items-center gap-3 rounded-xl px-2 py-1 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+          className="relative flex h-11 w-11 items-center justify-center rounded-2xl border border-[rgba(255,255,255,0.1)] bg-white/5 text-[#B9C6D6] transition hover:bg-white/10 hover:text-white"
+          aria-label="Messages"
         >
-
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-600 text-sm font-bold text-white">
-
-            {initials || <User size={18} />}
-
-          </div>
-
-          <div className="hidden lg:flex flex-col items-start">
-
-            <span className="text-sm font-semibold text-slate-800 dark:text-white">
-
-              {user.username || "Guest"}
-
-            </span>
-
-            <span className="text-xs text-slate-500 dark:text-slate-400">
-
-              {user.role || "Not signed in"}
-
-            </span>
-
-          </div>
-
+          <MessageSquare size={20} />
+          <span className="absolute -right-0.5 -top-0.5 h-2.5 w-2.5 rounded-full bg-[#2ECC71] shadow-md" />
         </button>
 
-        <Profile
-          open={profileOpen}
-          onClose={() => setProfileOpen(false)}
-        />
+        <button
+          className="relative flex h-11 w-11 items-center justify-center rounded-2xl border border-[rgba(255,255,255,0.1)] bg-white/5 text-[#B9C6D6] transition hover:bg-white/10 hover:text-white"
+          aria-label="Notifications"
+        >
+          <Bell size={20} />
+          <span className="absolute -right-0.5 -top-0.5 h-2.5 w-2.5 rounded-full bg-[#FDB813] shadow-md" />
+        </button>
 
+        <div ref={profileRef} className="relative z-50">
+          <button
+            onClick={() => setProfileOpen(!profileOpen)}
+            className="flex items-center gap-3 rounded-2xl border border-[rgba(253,184,19,0.3)] bg-gradient-to-r from-[#0F4C81] to-[#0A2A47] px-3 py-2 text-white shadow-[0_14px_40px_-16px_rgba(15,76,129,0.9)] transition hover:brightness-110"
+          >
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-[#FDB813] to-[#C98A00] text-sm font-extrabold text-[#1A1200]">
+              {initials || <User size={18} />}
+            </div>
+            <div className="hidden items-start gap-1 lg:flex">
+              <span className="text-sm font-bold text-white">{user.username || "Guest"}</span>
+              <span className="text-xs text-[#B9C6D6]">{user.role || "Member"}</span>
+            </div>
+          </button>
+
+          <Profile open={profileOpen} onClose={() => setProfileOpen(false)} />
+        </div>
       </div>
-
-    </div>
-
-  </header>
-);
+    </header>
+  );
 }

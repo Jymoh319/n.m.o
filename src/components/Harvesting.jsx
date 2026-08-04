@@ -1,5 +1,10 @@
 import { useState } from 'react';
-import { Wheat, Calendar, TrendingUp, Package, Search, Filter } from 'lucide-react';
+import { GraduationCap, TrendingUp, Package, Search, Filter, Plus, Download } from 'lucide-react';
+import { motion } from 'framer-motion';
+import GlassInput from './ui/GlassInput';
+import GlassBadge from './ui/GlassBadge';
+import GlassButton from './ui/GlassButton';
+import StatCard from './ui/StatCard';
 
 const batches = [
   {
@@ -74,9 +79,9 @@ const monthlySummary = [
 ];
 
 const statusConfig = {
-  processed: { color: 'text-emerald-600 dark:text-emerald-400 bg-emerald-100 dark:bg-emerald-900/30', label: 'Processed' },
-  processing: { color: 'text-primary-600 dark:text-primary-400 bg-primary-100 dark:bg-primary-900/30', label: 'Processing' },
-  pending: { color: 'text-amber-600 dark:text-amber-400 bg-amber-100 dark:bg-amber-900/30', label: 'Pending' },
+  processed: { variant: 'verified', label: 'Processed' },
+  processing: { variant: 'pending', label: 'Processing' },
+  pending: { variant: 'pending', label: 'Pending' },
 };
 
 export default function Harvesting() {
@@ -93,131 +98,152 @@ export default function Harvesting() {
 
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div className="bg-white dark:bg-slate-800 rounded-xl p-5 border border-slate-200 dark:border-slate-700 shadow-sm">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="p-2 rounded-lg bg-primary-100 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400">
-              <Package size={18} />
-            </div>
-            <span className="text-sm text-slate-500 dark:text-slate-400">Total Batches</span>
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+        <div className="flex items-center gap-3">
+          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-[#2ECC71] to-[#1E9E58] shadow-[0_14px_40px_-14px_rgba(46,204,113,0.9)]">
+            <GraduationCap size={24} className="text-[#04210f]" />
           </div>
-          <p className="text-2xl font-bold text-slate-800 dark:text-white">{batches.length}</p>
+          <div>
+            <h2 className="text-xl font-extrabold text-white">Training</h2>
+            <p className="text-sm text-[#7C8CA3]">Employee training programs &amp; certification pathways</p>
+          </div>
         </div>
-        <div className="bg-white dark:bg-slate-800 rounded-xl p-5 border border-slate-200 dark:border-slate-700 shadow-sm">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="p-2 rounded-lg bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400">
-              <Wheat size={18} />
-            </div>
-            <span className="text-sm text-slate-500 dark:text-slate-400">Total Harvested</span>
-          </div>
-          <p className="text-2xl font-bold text-slate-800 dark:text-white">{totalHarvested.toLocaleString()} tonnes</p>
-        </div>
-        <div className="bg-white dark:bg-slate-800 rounded-xl p-5 border border-slate-200 dark:border-slate-700 shadow-sm">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="p-2 rounded-lg bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400">
-              <TrendingUp size={18} />
-            </div>
-            <span className="text-sm text-slate-500 dark:text-slate-400">Avg Grade</span>
-          </div>
-          <p className="text-2xl font-bold text-slate-800 dark:text-white">88.5%</p>
+
+        <div className="flex flex-wrap items-center gap-3">
+          <GlassButton variant="teal" icon={<Plus size={18} />}>
+            New Training
+          </GlassButton>
+          <GlassButton variant="navy" icon={<Download size={18} />}>
+            Export
+          </GlassButton>
         </div>
       </div>
 
-      <div className="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm">
-        <h3 className="text-lg font-semibold text-slate-800 dark:text-white mb-4">Monthly Harvest Summary</h3>
-        <div className="overflow-x-auto">
-          <table className="w-full text-left">
-            <thead className="bg-slate-50 dark:bg-slate-900/50 border-b border-slate-200 dark:border-slate-700">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+        <StatCard
+          label="Total Programs"
+          value={batches.length}
+          gradient="from-[#0F4C81] to-[#2196F3]"
+          trendLabel="Active training"
+        />
+        <StatCard
+          label="Employees Trained"
+          value={totalHarvested}
+          gradient="from-[#2ECC71] to-[#1E9E58]"
+          trendLabel="Completed modules"
+        />
+        <StatCard
+          label="Avg Completion"
+          value={88}
+          suffix="%"
+          gradient="from-[#FDB813] to-[#FF9800]"
+          trendLabel="Pass rate"
+        />
+      </div>
+
+      <div className="table-wrap rounded-[26px]">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-5 pt-5 pb-4 border-b border-[rgba(255,255,255,0.06)]">
+          <div className="w-full sm:max-w-xs">
+            <GlassInput
+              icon={<Search size={18} className="text-[#7C8CA3]" />}
+              type="text"
+              placeholder="Search training programs..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="text-sm"
+            />
+          </div>
+
+          <div className="flex items-center gap-2">
+            <Filter size={18} className="text-[#7C8CA3]" />
+            <select
+              value={filter}
+              onChange={(e) => setFilter(e.target.value)}
+              className="input w-auto min-w-[150px] px-3 py-2 text-sm"
+            >
+              <option value="all">All Statuses</option>
+              <option value="processed">Processed</option>
+              <option value="processing">Processing</option>
+              <option value="pending">Pending</option>
+            </select>
+          </div>
+        </div>
+
+        <div className="table-scroll">
+          <table className="table">
+            <thead>
               <tr>
-                <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Month</th>
-                <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Titanium</th>
-                <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Zircon</th>
-                <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Rutile</th>
-                <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Ilmenite</th>
-                <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Monazite</th>
-                <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Total</th>
+                <th>Program ID</th>
+                <th>Date</th>
+                <th>Module</th>
+                <th>Duration</th>
+                <th>Score</th>
+                <th>Instructor</th>
+                <th>Method</th>
+                <th>Status</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-200 dark:divide-slate-700">
-              {monthlySummary.map((row) => (
-                <tr key={row.month} className="hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
-                  <td className="px-4 py-3 text-sm font-medium text-slate-800 dark:text-white">{row.month}</td>
-                  <td className="px-4 py-3 text-sm text-slate-600 dark:text-slate-300">{row.titanium.toLocaleString()} t</td>
-                  <td className="px-4 py-3 text-sm text-slate-600 dark:text-slate-300">{row.zircon.toLocaleString()} t</td>
-                  <td className="px-4 py-3 text-sm text-slate-600 dark:text-slate-300">{row.rutile.toLocaleString()} t</td>
-                  <td className="px-4 py-3 text-sm text-slate-600 dark:text-slate-300">{row.ilmenite.toLocaleString()} t</td>
-                  <td className="px-4 py-3 text-sm text-slate-600 dark:text-slate-300">{row.monazite.toLocaleString()} t</td>
-                  <td className="px-4 py-3 text-sm font-medium text-slate-800 dark:text-white">
-                    {(row.titanium + row.zircon + row.rutile + row.ilmenite + row.monazite).toLocaleString()} t
-                  </td>
-                </tr>
-              ))}
+            <tbody>
+              {filtered.map((batch) => {
+                const status = statusConfig[batch.status] || { variant: 'neutral', label: batch.status };
+                return (
+                  <motion.tr
+                    key={batch.id}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className="hover:bg-white/[0.04]"
+                  >
+                    <td className="cell-strong">{batch.id}</td>
+                    <td>{batch.date}</td>
+                    <td>{batch.mineral}</td>
+                    <td>{batch.quantity}</td>
+                    <td>{batch.grade}</td>
+                    <td>{batch.source}</td>
+                    <td>{batch.method}</td>
+                    <td>
+                      <GlassBadge label={status.label} variant={status.variant} />
+                    </td>
+                  </motion.tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
       </div>
 
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div className="relative flex-1 max-w-md">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-          <input
-            type="text"
-            placeholder="Search batches..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500"
-          />
+      <div className="table-wrap rounded-[26px]">
+        <div className="px-5 pt-5 pb-4 border-b border-[rgba(255,255,255,0.06)]">
+          <h3 className="text-lg font-bold text-white">Monthly Training Summary</h3>
+          <p className="text-sm text-[#7C8CA3]">Employee completions by month</p>
         </div>
-        <div className="flex items-center gap-2">
-          <Filter size={18} className="text-slate-500" />
-          <select
-            value={filter}
-            onChange={(e) => setFilter(e.target.value)}
-            className="px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500"
-          >
-            <option value="all">All Statuses</option>
-            <option value="processed">Processed</option>
-            <option value="processing">Processing</option>
-            <option value="pending">Pending</option>
-          </select>
-        </div>
-      </div>
 
-      <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left">
-            <thead className="bg-slate-50 dark:bg-slate-900/50 border-b border-slate-200 dark:border-slate-700">
+        <div className="table-scroll">
+          <table className="table">
+            <thead>
               <tr>
-                <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Batch ID</th>
-                <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Date</th>
-                <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Mineral</th>
-                <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Quantity</th>
-                <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Grade</th>
-                <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Source</th>
-                <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Method</th>
-                <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Status</th>
+                <th>Month</th>
+                <th>Titanium</th>
+                <th>Zircon</th>
+                <th>Rutile</th>
+                <th>Ilmenite</th>
+                <th>Monazite</th>
+                <th>Total</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-200 dark:divide-slate-700">
-              {filtered.map((batch) => {
-                const status = statusConfig[batch.status];
-                return (
-                  <tr key={batch.id} className="hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
-                    <td className="px-4 py-3 text-sm font-medium text-slate-800 dark:text-white">{batch.id}</td>
-                    <td className="px-4 py-3 text-sm text-slate-600 dark:text-slate-300">{batch.date}</td>
-                    <td className="px-4 py-3 text-sm text-slate-600 dark:text-slate-300">{batch.mineral}</td>
-                    <td className="px-4 py-3 text-sm text-slate-600 dark:text-slate-300">{batch.quantity}</td>
-                    <td className="px-4 py-3 text-sm text-slate-600 dark:text-slate-300">{batch.grade}</td>
-                    <td className="px-4 py-3 text-sm text-slate-600 dark:text-slate-300">{batch.source}</td>
-                    <td className="px-4 py-3 text-sm text-slate-600 dark:text-slate-300">{batch.method}</td>
-                    <td className="px-4 py-3">
-                      <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium ${status.color}`}>
-                        {status.label}
-                      </span>
-                    </td>
-                  </tr>
-                );
-              })}
+            <tbody>
+              {monthlySummary.map((row) => (
+                <tr key={row.month} className="hover:bg-white/[0.04]">
+                  <td className="cell-strong">{row.month}</td>
+                  <td>{row.titanium.toLocaleString()} t</td>
+                  <td>{row.zircon.toLocaleString()} t</td>
+                  <td>{row.rutile.toLocaleString()} t</td>
+                  <td>{row.ilmenite.toLocaleString()} t</td>
+                  <td>{row.monazite.toLocaleString()} t</td>
+                  <td className="cell-strong">
+                    {(row.titanium + row.zircon + row.rutile + row.ilmenite + row.monazite).toLocaleString()} t
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>

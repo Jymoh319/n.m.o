@@ -1,10 +1,8 @@
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
-import { ThemeProvider } from "./context/ThemeContext";
 
 import Login from "./components/Login";
 import Sidebar from "./components/Sidebar";
 import Header from "./components/Header";
-
 import Dashboard from "./components/Dashboard";
 import Certifications from "./components/Certificate";
 import Shipping from "./components/Shipping";
@@ -12,6 +10,8 @@ import MineralSources from "./components/MineralSources";
 import Records from "./components/Records";
 import Harvesting from "./components/Harvesting";
 import Settings from "./components/Settings";
+import ForgotPassword from "./components/ForgotPassword";
+import ResetPassword from "./components/ResetPassword";
 
 const pageTitles = {
   "/": "Dashboard",
@@ -62,8 +62,23 @@ function App() {
     <ThemeProvider>
       <BrowserRouter>
         <Routes>
+
+
           <Route path="/login" element={<Login />} />
+
+          <Route
+            path="/forgot-password"
+            element={<ForgotPassword />}
+          />
+
+          <Route
+            path="/reset-password/:token"
+            element={<ResetPassword />}
+          />
+
+
           <Route path="/*" element={<Layout />} />
+
         </Routes>
       </BrowserRouter>
     </ThemeProvider>

@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState } from "react";
-import { useTheme } from "../context/ThemeContext";
 import {
   PieChart,
   Pie,

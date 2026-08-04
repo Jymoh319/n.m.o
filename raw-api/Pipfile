@@ -16,6 +16,7 @@ flask-cors = "*"
 gunicorn = "*"
 psycopg2-binary = "*"
 flask-jwt-extended = "*"
+authlib = "*"
 
 [dev-packages]
 

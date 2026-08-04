@@ -17,6 +17,7 @@ gunicorn = "*"
 psycopg2-binary = "*"
 flask-jwt-extended = "*"
 authlib = "*"
+python-dotenv = "*"
 
 [dev-packages]
 

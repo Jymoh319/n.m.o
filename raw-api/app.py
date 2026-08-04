@@ -20,6 +20,7 @@ from resources.certificate_resource import CertificateListResource, CertificateR
 from resources.vehicle_resource import VehicleListResource, VehicleResource
 from resources.shipment_resource import ShipmentListResource, ShipmentResource
 from resources.site_record_resource import SiteRecordListResource, SiteRecordResource
+from resources.google_auth_resource import GoogleLoginResource, GoogleCallbackResource
 
 
 def create_app():
@@ -89,6 +90,11 @@ def create_app():
 
     api.add_resource(SiteRecordListResource, "/api/site-records")
     api.add_resource(SiteRecordResource, "/api/site-records/<int:record_id>")
+
+    # ---------- Google Callbacks ----------
+
+    api.add_resource(GoogleLoginResource, "/api/auth/google")
+    api.add_resource(GoogleCallbackResource, "/api/auth/google/callback")
 
     return app
 

@@ -35,7 +35,7 @@ async function loadSettings() {
     const token = localStorage.getItem("token");
 
     const response = await fetch(
-      "https://YOUR-BACKEND-URL/api/settings",
+  "https://nmo-production.up.railway.app/api/settings",
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -60,7 +60,7 @@ async function saveSettings() {
     const token = localStorage.getItem("token");
 
     const response = await fetch(
-      "https://YOUR-BACKEND-URL/api/settings",
+  "https://nmo-production.up.railway.app/api/settings",
       {
         method: "PUT",
         headers: {

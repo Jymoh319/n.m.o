@@ -2,9 +2,9 @@ import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Eye, EyeOff, ShieldCheck, Award, Lock } from "lucide-react";
 
-import API from "./api";
-import GlassButton from "./ui/GlassButton";
-import Logo from "./ui/Logo";
+import API from "../components/api";
+import GlassButton from "../components/ui/GlassButton";
+import Logo from "../components/ui/Logo";
 
 export default function ResetPassword() {
 

@@ -10,8 +10,8 @@ import MineralSources from "./components/MineralSources";
 import Records from "./components/Records";
 import Harvesting from "./components/Harvesting";
 import Settings from "./components/Settings";
-import ForgotPassword from "./components/ForgotPassword";
-import ResetPassword from "./components/ResetPassword";
+import ForgotPassword from "./context/ForgotPassword";
+import ResetPassword from "./context/ResetPassword";
 
 const pageTitles = {
   "/": "Dashboard",
@@ -59,10 +59,10 @@ function Layout() {
 
 function App() {
   return (
-    <ThemeProvider>
       <BrowserRouter>
         <Routes>
 
+          {/* Authentication */}
 
           <Route path="/login" element={<Login />} />
 
@@ -76,12 +76,12 @@ function App() {
             element={<ResetPassword />}
           />
 
+          {/* Main Application */}
 
           <Route path="/*" element={<Layout />} />
 
         </Routes>
       </BrowserRouter>
-    </ThemeProvider>
   );
 }
 

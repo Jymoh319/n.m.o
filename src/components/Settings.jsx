@@ -47,7 +47,6 @@ function SectionCard({ icon: Icon, title, desc, children }) {
 
 export default function Settings() {
   const [showAbout, setShowAbout] = useState(false);
-  const { theme, toggleTheme } = useTheme();
 
   return (
     <div className="space-y-6 max-w-3xl">
@@ -60,31 +59,6 @@ export default function Settings() {
           <p className="text-sm text-[#7C8CA3]">Configure your MineCert Pro workspace</p>
         </div>
       </div>
-
-      {/* Appearance */}
-      <SectionCard icon={Monitor} title="Appearance" desc="Customize your workspace theme">
-        <div className="flex items-center justify-between p-4 rounded-2xl bg-white/[0.04] border border-[rgba(255,255,255,0.08)]">
-          <div className="flex items-center gap-3">
-            <div className="p-2 rounded-xl bg-white/[0.06] text-[#FDB813]">
-              {theme === "dark" ? <Moon size={20} /> : <Sun size={20} />}
-            </div>
-
-            <div>
-              <p className="text-sm font-semibold text-white">Theme</p>
-              <p className="text-xs text-[#7C8CA3]">
-                Currently using {theme === "dark" ? "Dark" : "Light"} Mode
-              </p>
-            </div>
-          </div>
-
-          <button
-            onClick={toggleTheme}
-            className="btn btn-gold min-h-[2.6rem] px-4 py-2 text-sm"
-          >
-            Switch to {theme === "dark" ? "Light" : "Dark"} Mode
-          </button>
-        </div>
-      </SectionCard>
 
       {/* Notifications */}
       <SectionCard icon={Bell} title="Notifications" desc="Manage how you receive alerts">

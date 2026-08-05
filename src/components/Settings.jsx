@@ -51,47 +51,11 @@ async function loadSettings() {
   }
 }
 
-async function saveSettings() {
-  try {
-    setSaving(true);
-
-    const token = localStorage.getItem("token");
-
-    const response = await fetch(
-  "https://nmo-production.up.railway.app/api/settings",
-      {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(settings),
-      }
-    );
-
-    if (!response.ok) {
-      throw new Error("Failed to save settings");
-    }
-
-    setMessage("Settings saved successfully.");
-  } catch (error) {
-    setMessage("Failed to save settings.");
-  } finally {
-    setSaving(false);
-  }
-}
+export default function Settings() {
+  const [showAbout, setShowAbout] = useState(false);
 
   return (
     <div className="space-y-6 max-w-3xl">
-
-      {/* Appearance */}
-      <div className="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm">
-        <h3 className="text-lg font-semibold text-slate-800 dark:text-white mb-4 flex items-center gap-2">
-          <Monitor size={20} className="text-primary-500" />
-          Appearance
-        </h3>
-
-      </div>
 
       {/* Notifications */}
       <div className="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm">

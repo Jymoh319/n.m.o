@@ -36,8 +36,6 @@ const chartColors = [
 ];
 
 export default function Dashboard() {
-  const { theme } = useTheme();
-
   const [certificates, setCertificates] = useState([]);
   const [shipments, setShipments] = useState([]);
   const [sites, setSites] = useState([]);
